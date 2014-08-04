@@ -1,0 +1,5 @@
+npm-debug.log
+node_modules
+fullfatdb
+skimdb
+pouch__all_dbs__

@@ -1,0 +1,20 @@
+{
+  "name": "peer-npm",
+  "version": "0.1.0",
+  "description": "npm, peer-to-peer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "nolan.lawson@gmail.com",
+  "license": "Apache 2",
+  "dependencies": {
+    "bluebird": "^2.2.2",
+    "npm-fullfat-registry": "^1.1.4",
+    "pouchdb-server": "^0.5.1",
+    "request": "^2.39.0"
+  },
+  "bin": {
+    "peer-npm": "./index.js"
+  }
+}
