@@ -5,6 +5,7 @@
 var child = require('child_process');
 var Promise = require('bluebird');
 var request = require('request');
+var Fullfat = require('npm-fullfat-registry');
 
 child.fork(__dirname + '/node_modules/.bin/pouchdb-server', ['-p', '16984'])
 
@@ -28,13 +29,19 @@ Promise.resolve().then(function () {
     continuous: true
   }});
 }).then(function () {
-  child.fork(__dirname + '/node_modules/.bin/npm-fullfat-registry', [
-    '--fat=http://127.0.0.1:16984/fullfatdb', 
-    '--skim=http://127.0.0.1:16984/skimdb', 
-    '--seq-file=registry.seq', 
-    '--missing-log=missing.log'
-  ]);
+  var ff = new Fullfat({
+    skim: 'http://localhost:16984/skimdb', 
+    fat: 'http://localhost:16984/fullfatdb',
+    seq_file: 'registry.seq',
+    missing_log: 'missing.log'
+  }).on('error', function (err) {
+    console.error(err);
+    throw err;
+  });
+  // TODO: ff.getDoc({id: 'pouch'})
+  // seems to be the magic call
 }).catch(function (err) {
   console.error(err);
+  throw err;
 })
 
