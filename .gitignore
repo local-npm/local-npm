@@ -3,3 +3,6 @@ node_modules
 fullfatdb
 skimdb
 pouch__all_dbs__
+npm-fullfat-tmp-*
+registry.seq
+missing.log
