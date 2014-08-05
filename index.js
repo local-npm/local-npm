@@ -22,9 +22,11 @@ var upToDate;
 var startingTimeout = 1000;
 var backoff = 1.1;
 
+var sync;
 function replicateForever() {
-  skimPouch.replicate.from(SKIM_REMOTE, {
-    live: true
+  sync = skimPouch.replicate.from(SKIM_REMOTE, {
+    live: true,
+    batch_size: 1000
   }).on('change', function (change) {
     console.log('Replicating skimdb, last_seq is: ' + change.last_seq);
   }).on('uptodate', function () {
@@ -87,3 +89,11 @@ Promise.resolve().then(function () {
   throw err;
 });
 
+process.on('SIGINT', function () {
+  sync.cancel();
+  fatPouch.close().then(function () {
+    return skimPouch.close();
+  }).then(function () {
+    process.exit(0);
+  });
+});

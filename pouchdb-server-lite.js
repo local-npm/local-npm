@@ -38,9 +38,5 @@ app.listen(port, function () {
   }
 });
 
-process.on('SIGINT', function () {
-  process.exit(0);
-});
-
 exports.app = app;
 exports.PouchDB = PouchDB;
