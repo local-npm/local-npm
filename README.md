@@ -46,3 +46,5 @@ Details
 `local-npm` works by basically replicating the full skimdb to a local [PouchDB Server](github.com/pouchdb/pouchdb-server). You can inspect the running database at [http://127.0.0.1:15984/_utils](http://127.0.0.1:15984/_utils).
 
 The entire "skimdb" (i.e. metadata) is replicated locally, but for the "fullfatdb" (metadata plus tarballs), only what you `npm install` is stored. To start from scratch, just delete whatever directory you started the server in.
+
+You can't `npm publish` from your local registry. So be sure to switch back to the main registry before you try to publish!
