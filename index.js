@@ -16,6 +16,10 @@ if (argv.h || argv.help) {
 var port = argv.p || argv.port || 5080;
 var pouchPort = argv.P || argv['pouch-port'] || 16984;
 
+console.log('\nWelcome!');
+console.log('To start using local-npm, just run: ');
+console.log('\n  $ npm set registry http://127.0.0.1:' + port + '/fullfatdb');
+
 var SKIM_REMOTE = 'https://skimdb.npmjs.com/registry';
 var SKIM_LOCAL = 'http://localhost:' + pouchPort + '/skimdb';
 var FAT_LOCAL = 'http://localhost:' + pouchPort + '/fullfatdb';

@@ -25,8 +25,8 @@ var expressPouchDB = require('express-pouchdb');
 var PouchDB = require('pouchdb');
 app.use(expressPouchDB(PouchDB));
 app.listen(port, function () {
-  console.log('\npouchdb-server listening on port ' + port + '.');
-  console.log('\nnavigate to http://localhost:' + port + '/_utils for the Fauxton UI.\n');
+  console.log('\nPouchDB Server listening on port ' + port + '.');
+  console.log('Navigate to http://localhost:' + port + '/_utils for the Fauxton UI.');
 }).on('error', function (e) {
   if (e.code === 'EADDRINUSE') {
     console.error('\nError: Port ' + port + ' is already in use.');
