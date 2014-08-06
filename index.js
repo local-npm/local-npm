@@ -61,7 +61,7 @@ function replicateForever() {
       console.log('Replicating skimdb, last_seq is: ' + change.last_seq + ' (' + percent + '%)');
     }).on('uptodate', function () {
       console.log('local skimdb is up to date');
-      skimPouch.put({_id: '_local/upToDate', upToDate: true});
+      fs.writeFile('uptodate.txt', '1');
       upToDate = true;
     }).on('error', function (err) {
       console.error('error during replication with skimdb');
@@ -79,14 +79,11 @@ replicateForever();
 
 // start doing exciting shit
 Promise.resolve().then(function () {
-  return skimPouch.get('_local/upToDate').catch(function (err) {
-    if (err.status !== 404) {
-      throw err;
-    }
-    return {}; // default doc
+  return Promise.promisify(fs.readFile)('uptodate.txt').catch(function (err) {
+    return '0'; // default
   });
-}).then(function (doc) {
-  upToDate = doc.upToDate;
+}).then(function (upToDateFile) {
+  upToDate = upToDateFile === '1';
   if (upToDate) {
     console.log('local skimdb is up to date');
   }
