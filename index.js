@@ -99,8 +99,8 @@ Promise.resolve().then(function () {
     fat: FAT_LOCAL,
     seq_file: 'registry.seq',
     missing_log: 'missing.log'
-  });
-  fullFat.on('error', function (err) {
+  })
+  .on('error', function (err) {
     console.error("fullfat hit an error");
     console.error(err);
   });
@@ -133,7 +133,6 @@ Promise.resolve().then(function () {
               if (change.id === docId) {
                 console.log('successfully wrote to local fullfatdb: ' + docId);
                 changes.cancel();
-                //changes.removeListener('change', onChange); // TODO: shouldn't have to do this
                 resolve();
               }
             }).on('error', function (err) {
@@ -175,6 +174,7 @@ Promise.resolve().then(function () {
     updateAfterIncomingChange();
   } else {
     skimPouch.on('uptodate', function () {
+      fullFat.skim = SKIM_LOCAL; // internal API, probably shouldn't do this
       skimPouch.info().then(function (info) {
         return Promise.promisify(fs.writeFile)('skim-seq.txt',
             info.update_seq.toString()).then(function () {
