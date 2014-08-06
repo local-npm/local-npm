@@ -18,12 +18,13 @@
   "dependencies": {
     "bluebird": "^2.2.2",
     "corser": "^2.0.0",
-    "express": "^4.6.1",
+    "express": "4.6.1",
     "express-pouchdb": "^0.5.1",
     "http-proxy": "^1.1.6",
     "morgan": "^1.2.2",
     "npm-fullfat-registry": "^1.1.4",
     "optimist": "^0.6.1",
+    "request": "^2.39.0",
     "serve-favicon": "^2.0.1"
   },
   "bin": {

@@ -6,8 +6,8 @@ var SKIM_REMOTE = 'https://skimdb.npmjs.com/registry';
 var SKIM_LOCAL = 'http://localhost:16984/skimdb';
 var FAT_LOCAL = 'http://localhost:16984/fullfatdb';
 var FAT_REMOTE = 'http://registry.npmjs.org';
-var EMPTY_LOCAL = 'http://localhost:16984/empty';
 
+var request = require('request');
 var httpProxy = require('http-proxy');
 var Promise = require('bluebird');
 var fs = require('fs');
@@ -74,40 +74,57 @@ Promise.resolve().then(function () {
   });
 }).then(function () {
   // start user-facing proxy server
+
+  // only execute n fullFat.js operations in parallel
+  var NUM_PARALLEL = 5;
+  var queues = [];
+  for (var i = 0; i < NUM_PARALLEL; i++) {
+    queues.push(Promise.resolve());
+  }
+
+  function processWithFullFat(docId) {
+    console.log('fetching ' + docId + ' with fullFat.js');
+    // recover by fetching with fullFat
+    // wait for changes to let us know it was fetched
+    var queue = queues[docId.charCodeAt(0) % queues.length];
+    return queue.then(function () {
+      console.log('docId is ' + docId + ', looking up in pouch');
+      return fatPouch.get(docId).catch(function (err) {
+        console.log('pouch responded');
+        if (err.status !== 404) {
+          throw err;
+        }
+        return new Promise(function (resolve, reject) {
+          var changes = fatPouch.changes({
+            since: 'latest',
+            live: true
+          }).on('change', function (change) {
+              console.log('got change: ' + change.id);
+              if (change.id === docId) {
+                console.log('successfully wrote to local fullfatdb: ' + docId);
+                changes.cancel();
+                changes.removeAllListeners('change'); // TODO: shouldn't have to do this
+                resolve();
+              }
+            }).on('error', reject);
+          console.log('telling fat to fetch it');
+          fullFat.getDoc({id: docId});
+        });
+      });
+    });
+  }
+
   var proxy = httpProxy.createProxyServer({});
   var server = require('http').createServer(function (req, res) {
     Promise.resolve().then(function () {
       if (req.method.toLowerCase() === 'get' &&
-          /^\/fullfatdb\/([^\/]+)\/?(?:\?[^\/]*)?$/.test(req.url)) {
-        // simple doc request (get)
+          /^\/fullfatdb\/([^\/]+)/.test(req.url)) {
+        // simple doc or attachment request (get)
         console.log('simple doc request');
         var url = require('url').parse(req.url);
         var docId = decodeURIComponent(url.pathname.split('/')[2]);
         // check if it exists first
-        console.log('docId is ' + docId);
-        return fatPouch.get(docId).catch(function (err) {
-          if (err.status === 404) {
-            console.log('recovering');
-            // recover by fetching with fullFat
-            // wait for changes to let us know it was fetched
-            return new Promise(function (resolve, reject) {
-              var changes = fatPouch.changes({
-                since: 'latest',
-                live: true
-              }).on('change', function (change) {
-                console.log('got change: ' + change.id);
-                if (change.id === docId) {
-                  console.log('successfully wrote to local fullfatdb: ' + docId);
-                  changes.cancel();
-                  resolve();
-                }
-              }).on('error', reject);
-              console.log('telling fat to fetch it');
-              fullFat.getDoc({id: docId});
-            });
-          }
-          throw err;
-        });
+        return processWithFullFat(docId);
       }
     }).then(function (doc) {
       console.log('doc exists locally, using local fat');
@@ -115,7 +132,10 @@ Promise.resolve().then(function () {
         target: 'http://127.0.0.1:16984'
       });
     }).catch(function (err) {
+      console.log('error, need to use remote fat instead');
       console.error(err);
+      var url = req.url.replace(/^\/fullfatdb/, '');
+      request.get(FAT_REMOTE + url).pipe(res);
     });
   });
   server.listen(5080, function (err) {
@@ -131,6 +151,7 @@ Promise.resolve().then(function () {
 });
 
 process.on('SIGINT', function () {
+  // close gracefully
   sync.cancel();
   fatPouch.close().then(function () {
     return skimPouch.close();
