@@ -129,6 +129,7 @@ Promise.resolve().then(function () {
               }
             }).on('error', reject);
           console.log('telling fat to fetch it');
+          // this seq is only used by fullFat to determine the file name to write tgz's to
           fullFat.getDoc({id: docId, seq: Math.round(Math.random() * 1000000)});
         });
       });
