@@ -23,6 +23,7 @@
     "morgan": "^1.2.2",
     "npm-fullfat-registry": "^1.1.4",
     "optimist": "^0.6.1",
+    "pouchdb": "pouchdb/pouchdb",
     "request": "^2.39.0",
     "serve-favicon": "^2.0.1"
   },
