@@ -5,7 +5,7 @@ local-npm
 
 Slow npm got you down? Conference wifi flaking out at exactly the wrong time? Use `local-npm`.
 
-This is a simple script that sets up a local npm registry that serves modules from npm, caches them locally, and then updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry.
+`local-npm` sets up an npm registry on your local machine that serves modules from npm, caches them, and then updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry.
 
 The first time you start `npm install`ing stuff, it'll be slow. Then the second time it'll be super fast, because it's all local.
 
