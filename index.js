@@ -7,7 +7,7 @@ if (argv.h || argv.help) {
   console.log('\nusage:');
   console.log('-h, --help        : show help');
   console.log('-p, --port        : port (default 5080)');
-  console.log('-P, --pouch-port : pouchdb-server port (default 16984)');
+  console.log('-P, --pouch-port  : pouchdb-server port (default 16984)');
   console.log('-l, --log         : pouchdb-server log level (ev|short|tiny|combined|off)');
   console.log();
   return process.exit(0);
