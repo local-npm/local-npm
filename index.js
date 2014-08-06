@@ -8,7 +8,6 @@ var FAT_LOCAL = 'http://localhost:16984/fullfatdb';
 var FAT_REMOTE = 'http://registry.npmjs.org';
 
 var request = require('request');
-var httpProxy = require('http-proxy');
 var Promise = require('bluebird');
 var fs = require('fs');
 var Fullfat = require('npm-fullfat-registry');
@@ -114,7 +113,6 @@ Promise.resolve().then(function () {
     });
   }
 
-  var proxy = httpProxy.createProxyServer({});
   var server = require('http').createServer(function (req, res) {
     Promise.resolve().then(function () {
       if (req.method.toLowerCase() === 'get' &&
@@ -128,9 +126,7 @@ Promise.resolve().then(function () {
       }
     }).then(function (doc) {
       console.log('doc exists locally, using local fat');
-      proxy.web(req, res, {
-        target: 'http://127.0.0.1:16984'
-      });
+      request.get('http://127.0.0.1:16984' + req.url).pipe(res);
     }).catch(function (err) {
       console.log('error, need to use remote fat instead');
       console.error(err);
