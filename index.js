@@ -85,8 +85,8 @@ Promise.resolve().then(function () {
     console.log('fetching ' + docId + ' with fullFat.js');
     // recover by fetching with fullFat
     // wait for changes to let us know it was fetched
-    var queue = queues[docId.charCodeAt(0) % queues.length];
-    return queue.then(function () {
+    var queueIdx = docId.charCodeAt(0) % queues.length;
+    queues[queueIdx] = queues[queueIdx].then(function () {
       console.log('docId is ' + docId + ', looking up in pouch');
       return fatPouch.get(docId).catch(function (err) {
         console.log('pouch responded');
@@ -111,6 +111,7 @@ Promise.resolve().then(function () {
         });
       });
     });
+    return queues[queueIdx];
   }
 
   var server = require('http').createServer(function (req, res) {
