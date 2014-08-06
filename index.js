@@ -27,19 +27,27 @@ var fullFat;
 var sync;
 
 function replicateForever() {
-  sync = skimPouch.replicate.from(SKIM_REMOTE, {
-    live: true,
-    batch_size: 1000
-  }).on('change', function (change) {
-    console.log('Replicating skimdb, last_seq is: ' + change.last_seq);
-  }).on('uptodate', function () {
-    console.log('local skimdb is up to date');
-    skimPouch.put({_id: '_local/upToDate', upToDate: true});
-    upToDate = true;
-  }).on('error', function (err) {
+  var skimRemote = new PouchDB(SKIM_REMOTE);
+  skimRemote.info().then(function (info) {
+    sync = skimPouch.replicate.from(SKIM_REMOTE, {
+      live: true,
+      batch_size: 1000
+    }).on('change', function (change) {
+      var percent = (Math.round(change.last_seq / info.update_seq * 10000) / 100).toFixed(2);
+      console.log('Replicating skimdb, last_seq is: ' + change.last_seq + ' (' + percent + '%)');
+    }).on('uptodate', function () {
+      console.log('local skimdb is up to date');
+      skimPouch.put({_id: '_local/upToDate', upToDate: true});
+      upToDate = true;
+    }).on('error', function (err) {
+      console.log('error during replication with skimdb');
+      console.error(err);
+      // just keep going
+      setTimeout(replicateForever, Math.round(startingTimeout * backoff));
+    });
+  }).catch(function (err) {
+    console.log('error doing info() on skimdb');
     console.error(err);
-    // just keep going
-    setTimeout(replicateForever, Math.round(startingTimeout * backoff));
   });
 }
 replicateForever();
