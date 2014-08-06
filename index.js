@@ -129,7 +129,7 @@ Promise.resolve().then(function () {
               }
             }).on('error', reject);
           console.log('telling fat to fetch it');
-          fullFat.getDoc({id: docId});
+          fullFat.getDoc({id: docId, seq: Math.round(Math.random() * 1000000)});
         });
       });
     });
