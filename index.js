@@ -20,6 +20,8 @@ console.log('\nWelcome!');
 console.log('To start using local-npm, just run: ');
 console.log('\n  $ npm set registry http://127.0.0.1:' + port + '/fullfatdb');
 
+var NUM_PARALLEL_TASKS = 10;
+
 var SKIM_REMOTE = 'https://skimdb.npmjs.com/registry';
 var SKIM_LOCAL = 'http://localhost:' + pouchPort + '/skimdb';
 var FAT_LOCAL = 'http://localhost:' + pouchPort + '/fullfatdb';
@@ -35,6 +37,9 @@ var PouchDB = pouchdbServerLite.PouchDB;
 
 var skimPouch = new PouchDB('skimdb');
 var fatPouch = new PouchDB('fullfatdb');
+// I tend to use more than the default 10 listeners
+skimPouch.setMaxListeners(NUM_PARALLEL_TASKS * 20);
+fatPouch.setMaxListeners(NUM_PARALLEL_TASKS * 20);
 
 // replicate from central skimdb
 var upToDate;
@@ -103,21 +108,19 @@ Promise.resolve().then(function () {
   // start user-facing proxy server
 
   // only execute n fullFat.js operations in parallel
-  var NUM_PARALLEL = 5;
   var queues = [];
-  for (var i = 0; i < NUM_PARALLEL; i++) {
+  for (var i = 0; i < NUM_PARALLEL_TASKS; i++) {
     queues.push(Promise.resolve());
   }
 
   function processWithFullFat(docId) {
-    console.log('fetching ' + docId + ' with fullFat.js');
+    console.log('request for ' + docId + '...');
     // recover by fetching with fullFat
     // wait for changes to let us know it was fetched
     var queueIdx = docId.charCodeAt(0) % queues.length;
     queues[queueIdx] = queues[queueIdx].then(function () {
       console.log('docId is ' + docId + ', looking up in pouch');
       return fatPouch.get(docId).catch(function (err) {
-        console.log('pouch responded');
         if (err.status !== 404) {
           throw err;
         }
@@ -125,16 +128,19 @@ Promise.resolve().then(function () {
           var changes = fatPouch.changes({
             since: 'latest',
             live: true
-          }).on('change', function (change) {
+          }).on('change', function onChange(change) {
               console.log('got change: ' + change.id);
               if (change.id === docId) {
                 console.log('successfully wrote to local fullfatdb: ' + docId);
                 changes.cancel();
-                changes.removeAllListeners('change'); // TODO: shouldn't have to do this
+                //changes.removeListener('change', onChange); // TODO: shouldn't have to do this
                 resolve();
               }
-            }).on('error', reject);
-          console.log('telling fat to fetch it');
+            }).on('error', function (err) {
+              console.error('change hit error');
+              reject(err);
+            });
+          console.log('telling fullfat.js to fetch ' + docId);
           // this seq is only used by fullFat to determine the file name to write tgz's to
           fullFat.getDoc({id: docId, seq: Math.round(Math.random() * 1000000)});
         });
