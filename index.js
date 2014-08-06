@@ -38,8 +38,8 @@ var PouchDB = pouchdbServerLite.PouchDB;
 var skimPouch = new PouchDB('skimdb');
 var fatPouch = new PouchDB('fullfatdb');
 // I tend to use more than the default 10 listeners
-skimPouch.setMaxListeners(NUM_PARALLEL_TASKS * 20);
-fatPouch.setMaxListeners(NUM_PARALLEL_TASKS * 20);
+skimPouch.setMaxListeners(NUM_PARALLEL_TASKS * 50);
+fatPouch.setMaxListeners(NUM_PARALLEL_TASKS * 50);
 
 // replicate from central skimdb
 var upToDate;
