@@ -95,10 +95,18 @@ Promise.resolve().then(function () {
   return Promise.promisify(fs.writeFile)('registry.seq', '999999999999');
 }).then(function () {
   fullFat = new Fullfat({
-    skim: upToDate ? SKIM_LOCAL : SKIM_REMOTE,
+    skim: SKIM_LOCAL,
     fat: FAT_LOCAL,
     seq_file: 'registry.seq',
     missing_log: 'missing.log'
+  })
+  .on('start', function () {
+    // we want the changes feed to only be local,
+    // but all other operations should be remote
+    // if we're not done replicating yet
+    process.nextTick(function () {
+      fullFat.skim = upToDate ? SKIM_LOCAL : SKIM_REMOTE;
+    });
   })
   .on('error', function (err) {
     console.error("fullfat hit an error");
