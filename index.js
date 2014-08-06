@@ -47,20 +47,22 @@ function replicateForever() {
       live: true,
       batch_size: 1000
     }).on('change', function (change) {
-      var percent = (Math.round(change.last_seq / info.update_seq * 10000) / 100).toFixed(2);
+      var percent = Math.min(100,
+        (Math.floor(change.last_seq / info.update_seq * 10000) / 100).toFixed(2));
       console.log('Replicating skimdb, last_seq is: ' + change.last_seq + ' (' + percent + '%)');
     }).on('uptodate', function () {
       console.log('local skimdb is up to date');
       skimPouch.put({_id: '_local/upToDate', upToDate: true});
       upToDate = true;
     }).on('error', function (err) {
-      console.log('error during replication with skimdb');
+      console.error('error during replication with skimdb');
       console.error(err);
       // just keep going
-      setTimeout(replicateForever, Math.round(startingTimeout * backoff));
+      startingTimeout *= backoff;
+      setTimeout(replicateForever, Math.round(startingTimeout));
     });
   }).catch(function (err) {
-    console.log('error doing info() on skimdb');
+    console.error('error doing info() on skimdb');
     console.error(err);
   });
 }
@@ -90,7 +92,7 @@ Promise.resolve().then(function () {
     missing_log: 'missing.log'
   });
   fullFat.on('error', function (err) {
-    console.log("fullfat hit an error");
+    console.error("fullfat hit an error");
     console.error(err);
   });
 }).then(function () {
@@ -137,6 +139,45 @@ Promise.resolve().then(function () {
     return queues[queueIdx];
   }
 
+  function updateAfterIncomingChange() {
+    // keep a log of what the last seq we checked was
+    fs.readFile('skim-seq.txt', function (err, data) {
+      var seq = data ? parseInt(data) : 0;
+      console.log('reading skimPouch changes since ' + seq);
+      skimPouch.changes({since: seq, live: true}).on('change', function (change) {
+        fs.writeFile('skim-seq.txt', change.seq.toString());
+        fatPouch.allDocs({keys: [change.id]}).then(function (res) {
+          if (res[0] && res[0].rev !== change.changes[0].rev) {
+            console.log('new change came in for ' + change.id + ', updating...');
+            return processWithFullFat(change.id);
+          }
+        }).catch(function (err) {
+          console.error('unhandled skimPouch allDocs err');
+          console.error(err);
+        });
+      }).on('error', function (err) {
+        console.error('unhandled skimPouch changes err');
+        console.error(err);
+      });
+    });
+  }
+  if (upToDate) {
+    updateAfterIncomingChange();
+  } else {
+    skimPouch.on('uptodate', function () {
+      skimPouch.info().then(function (info) {
+        return Promise.promisify(fs.writeFile)('skim-seq.txt',
+            info.update_seq.toString()).then(function () {
+          updateAfterIncomingChange();
+        });
+      }).catch(function (err) {
+        console.error('unhandled writeFile err');
+        console.error(err);
+      });
+    });
+  }
+
+
   var server = require('http').createServer(function (req, res) {
     Promise.resolve().then(function () {
       if (req.method.toLowerCase() === 'get' &&
@@ -152,7 +193,7 @@ Promise.resolve().then(function () {
       console.log('doc exists locally, using local fat');
       request.get('http://127.0.0.1:' + pouchPort + req.url).pipe(res);
     }).catch(function (err) {
-      console.log('error, need to use remote fat instead');
+      console.error('error, need to use remote fat instead');
       console.error(err);
       var url = req.url.replace(/^\/fullfatdb/, '');
       request.get(FAT_REMOTE + url).pipe(res);

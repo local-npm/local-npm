@@ -6,3 +6,4 @@ pouch__all_dbs__
 npm-fullfat-tmp-*
 registry.seq
 missing.log
+skim-seq.txt
