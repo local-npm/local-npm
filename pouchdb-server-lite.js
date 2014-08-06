@@ -6,7 +6,7 @@ var express = require('express');
 var corser  = require('corser');
 var favicon = require('serve-favicon');
 var argv    = require('optimist').argv;
-var port    = +(argv.p || argv.port || 16984);
+var port    = argv.P || argv['pouch-port'] || 16984;
 var logger  = argv.l || argv.log || 'dev';
 var app     = express();
 

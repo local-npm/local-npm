@@ -2,9 +2,23 @@
 
 'use strict';
 
+var argv = require('optimist').argv;
+if (argv.h || argv.help) {
+  console.log('\nusage:');
+  console.log('-h, --help        : show help');
+  console.log('-p, --port        : port (default 5080)');
+  console.log('-P, --pouch-port : pouchdb-server port (default 16984)');
+  console.log('-l, --log         : pouchdb-server log level (ev|short|tiny|combined|off)');
+  console.log();
+  return process.exit(0);
+}
+
+var port = argv.p || argv.port || 5080;
+var pouchPort = argv.P || argv['pouch-port'] || 16984;
+
 var SKIM_REMOTE = 'https://skimdb.npmjs.com/registry';
-var SKIM_LOCAL = 'http://localhost:16984/skimdb';
-var FAT_LOCAL = 'http://localhost:16984/fullfatdb';
+var SKIM_LOCAL = 'http://localhost:' + pouchPort + '/skimdb';
+var FAT_LOCAL = 'http://localhost:' + pouchPort + '/fullfatdb';
 var FAT_REMOTE = 'http://registry.npmjs.org';
 
 var request = require('request');
@@ -135,7 +149,7 @@ Promise.resolve().then(function () {
       }
     }).then(function (doc) {
       console.log('doc exists locally, using local fat');
-      request.get('http://127.0.0.1:16984' + req.url).pipe(res);
+      request.get('http://127.0.0.1:' + pouchPort + req.url).pipe(res);
     }).catch(function (err) {
       console.log('error, need to use remote fat instead');
       console.error(err);
@@ -147,7 +161,7 @@ Promise.resolve().then(function () {
     if (err) {
       console.error(err);
     } else {
-      console.log('Proxy server started at http://127.0.0.1:5080');
+      console.log('Proxy server started at http://127.0.0.1:' + port);
     }
   });
 }).catch(function (err) {
