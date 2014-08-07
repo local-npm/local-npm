@@ -172,7 +172,8 @@ Promise.resolve().then(function () {
           return fatPouch.allDocs({keys: [change.id]});
         }).then(function (res) {
           console.log('got res: ' + JSON.stringify(res));
-          if (res[0] && res[0].rev !== change.changes[0].rev) {
+          var first = res.rows[0];
+          if (first && first.value && first.value.rev !== change.changes[0].rev) {
             console.log('new change came in for ' + change.id + ', updating...');
             process.nextTick(function () {
               processWithFullFat(change.id);
