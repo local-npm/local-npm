@@ -1,13 +1,13 @@
 local-npm
 ==========
 
-(Very alpha. Use with caution.)
+Slow npm got you down? Conference wi-fi flaking out just when you need it? Use `local-npm`.
 
-Slow npm got you down? Conference wifi flaking out at exactly the wrong time? Use `local-npm`.
-
-`local-npm` sets up an npm registry server on your local machine that serves modules, caches them, and then updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry. Only what you `npm install` is saved locally. 
+`local-npm` sets up a local npm server that serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry &ndash; only what you `npm install` is saved locally. 
 
 If you're organizing a conference/meetup/whatever, you can also share this local server with multiple people.  So if your teammates are constantly installing the same modules over and over again, this can save a lot of time in the long run.
+
+This is alpha software. Use with caution.
 
 Install
 ------
@@ -35,7 +35,7 @@ For the command `local-npm`:
 -h, --help        : show help
 -p, --port        : port (default 5080)
 -P, --pouch-port  : pouchdb-server port (default 16984)
--l, --log         : pouchdb-server log level (ev|short|tiny|combined|off)
+-l, --log         : pouchdb-server log level (dev|short|tiny|combined|off)
 ```
 
 Details
