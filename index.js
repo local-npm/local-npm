@@ -34,6 +34,7 @@ console.log('\n  $ npm set registry ' + FAT_REMOTE);
 var request = require('request');
 var Promise = require('bluebird');
 var fs = require('fs');
+var atomic = require('./atomic-write');
 var Fullfat = require('npm-fullfat-registry');
 var pouchdbServerLite = require('./pouchdb-server-lite');
 var app = pouchdbServerLite.app;
@@ -63,7 +64,7 @@ function replicateSkim() {
       console.log('Replicating skimdb, last_seq is: ' + change.last_seq + ' (' + percent + '%)');
     }).on('uptodate', function () {
       console.log('local skimdb is up to date');
-      fs.writeFile('uptodate.txt', '1');
+      atomic.writeFile('uptodate.txt', '1');
       upToDate = true;
     }).on('error', function (err) {
       console.error('error during replication with skimdb');
@@ -99,7 +100,7 @@ Promise.resolve().then(function () {
   }
 }).then(function () {
   // trick Fullfat into never doing automatic syncing; we don't use it for that
-  return Promise.promisify(fs.writeFile)('registry.seq', '999999999999');
+  return Promise.promisify(atomic.writeFile)('registry.seq', '999999999999');
 }).then(function () {
   fullFat = new Fullfat({
     skim: SKIM_LOCAL,
@@ -167,11 +168,10 @@ Promise.resolve().then(function () {
       skimPouch.changes({since: seq, live: true}).on('change', function (change) {
         queue = queue.then(function () {
           var seqStr = change.seq.toString();
-          return Promise.promisify(fs.writeFile)('skim-seq.txt', seqStr);
+          return Promise.promisify(atomic.writeFile)('skim-seq.txt', seqStr);
         }).then(function () {
           return fatPouch.allDocs({keys: [change.id]});
         }).then(function (res) {
-          console.log('got res: ' + JSON.stringify(res));
           var first = res.rows[0];
           if (first && first.value && first.value.rev !== change.changes[0].rev) {
             console.log('new change came in for ' + change.id + ', updating...');
@@ -199,8 +199,8 @@ Promise.resolve().then(function () {
       }
       alreadyStarted = true;
       fullFat.skim = SKIM_LOCAL; // internal API, probably shouldn't do this
-      skimPouch.info().then(function (info) {
-        return Promise.promisify(fs.writeFile)('skim-seq.txt',
+      skimRemote.info().then(function (info) {
+        return Promise.promisify(atomic.writeFile)('skim-seq.txt',
             info.update_seq.toString()).then(function () {
           updateAfterIncomingChange();
         });
