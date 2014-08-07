@@ -169,12 +169,15 @@ Promise.resolve().then(function () {
           var seqStr = change.seq.toString();
           return Promise.promisify(fs.writeFile)('skim-seq.txt', seqStr);
         }).then(function () {
-          return fatPouch.allDocs({keys: [change.id]}).then(function (res) {
-            if (res[0] && res[0].rev !== change.changes[0].rev) {
-              console.log(change.id + ': new change came in, updating...');
-              return processWithFullFat(change.id);
-            }
-          });
+          return fatPouch.allDocs({keys: [change.id]});
+        }).then(function (res) {
+          console.log('got res: ' + JSON.stringify(res));
+          if (res[0] && res[0].rev !== change.changes[0].rev) {
+            console.log('new change came in for ' + change.id + ', updating...');
+            process.nextTick(function () {
+              processWithFullFat(change.id);
+            });
+          }
         }).catch(function (err) {
           console.error('unhandled skimPouch allDocs() err');
           console.error(err);
