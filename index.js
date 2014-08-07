@@ -43,8 +43,8 @@ var skimRemote = new PouchDB(SKIM_REMOTE);
 var skimPouch = new PouchDB('skimdb');
 var fatPouch = new PouchDB('fullfatdb');
 // I tend to use more than the default 10 listeners
-skimPouch.setMaxListeners(NUM_PARALLEL_TASKS * 50);
-fatPouch.setMaxListeners(NUM_PARALLEL_TASKS * 50);
+skimPouch.setMaxListeners(NUM_PARALLEL_TASKS * 100);
+fatPouch.setMaxListeners(NUM_PARALLEL_TASKS * 100);
 
 // replicate from central skimdb
 var upToDate;
@@ -87,7 +87,9 @@ var fullFat;
 
 // start doing exciting shit
 Promise.resolve().then(function () {
-  return Promise.promisify(fs.readFile)('uptodate.txt').catch(function (err) {
+  return Promise.promisify(fs.readFile)('uptodate.txt', {
+    encoding: 'utf8'
+  }).catch(function (err) {
     return '0'; // default
   });
 }).then(function (upToDateFile) {
@@ -158,18 +160,23 @@ Promise.resolve().then(function () {
 
   function updateAfterIncomingChange() {
     // keep a log of what the last seq we checked was
-    fs.readFile('skim-seq.txt', function (err, data) {
+    var queue = Promise.resolve();
+    fs.readFile('skim-seq.txt', {encoding: 'utf8'}, function (err, data) {
       var seq = data ? parseInt(data) : 0;
       console.log('reading skimPouch changes since ' + seq);
       skimPouch.changes({since: seq, live: true}).on('change', function (change) {
-        fs.writeFile('skim-seq.txt', change.seq.toString());
-        fatPouch.allDocs({keys: [change.id]}).then(function (res) {
-          if (res[0] && res[0].rev !== change.changes[0].rev) {
-            console.log('new change came in for ' + change.id + ', updating...');
-            return processWithFullFat(change.id);
-          }
+        queue = queue.then(function () {
+          var seqStr = change.seq.toString();
+          return Promise.promisify(fs.writeFile)('skim-seq.txt', seqStr);
+        }).then(function () {
+          return fatPouch.allDocs({keys: [change.id]}).then(function (res) {
+            if (res[0] && res[0].rev !== change.changes[0].rev) {
+              console.log(change.id + ': new change came in, updating...');
+              return processWithFullFat(change.id);
+            }
+          });
         }).catch(function (err) {
-          console.error('unhandled skimPouch allDocs err');
+          console.error('unhandled skimPouch allDocs() err');
           console.error(err);
         });
       }).on('error', function (err) {
