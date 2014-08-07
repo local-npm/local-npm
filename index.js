@@ -25,7 +25,7 @@ var FAT_REMOTE = 'https://registry.npmjs.org';
 
 console.log('\nWelcome!');
 console.log('To start using local-npm, just run: ');
-console.log('\n  $ npm set registry http://127.0.0.1:' + port + '/fullfatdb');
+console.log('\n  $ npm set registry http://127.0.0.1:' + port);
 console.log('\nTo switch back, you can run: ');
 console.log('\n  $ npm set registry ' + FAT_REMOTE);
 
@@ -197,11 +197,13 @@ Promise.resolve().then(function () {
   var server = require('http').createServer(function (req, res) {
     var docId;
     Promise.resolve().then(function () {
-      if (req.method.toLowerCase() === 'get' &&
-          /^\/fullfatdb\/([^\/]+)/.test(req.url)) {
+      if (req.method.toLowerCase() === 'get') {
         // simple doc or attachment request (get)
         var url = require('url').parse(req.url);
-        docId = decodeURIComponent(url.pathname.split('/')[2]);
+        docId = decodeURIComponent(url.pathname.split('/')[1]);
+        if (!docId) {
+          return;
+        }
         console.log(docId + ': simple doc request');
         // check if it exists first
         return fatPouch.get(docId).catch(function (err) {
@@ -216,19 +218,20 @@ Promise.resolve().then(function () {
       } else {
         throw new Error('bad_local_request');
       }
-    }).then(function (doc) {
-      console.log(docId + ': doc exists locally');
-      request.get('http://127.0.0.1:' + pouchPort + req.url).pipe(res);
+    }).then(function () {
+      if (docId) {
+        console.log(docId + ': doc exists locally');
+      }
+      request.get('http://127.0.0.1:' + pouchPort + '/fullfatdb' + req.url).pipe(res);
     }).catch(function (err) {
       if (err.name === 'bad_local_request') {
         console.error('got a bad request: ' + req.url);
-        res.status(400).send({error: 'this proxy only accepts GETs to /fullfatdb'});
+        res.status(400).send({error: 'this proxy only accepts GETs'});
       } else {
         console.error(docId + ': no local doc, need to proxy to remote');
         // we got an error, so let's proxy to the remote fat
         // so we can return immediately
-        var url = req.url.replace(/^\/fullfatdb/, '');
-        request.get(FAT_REMOTE + url).pipe(res);
+        request.get(FAT_REMOTE + req.url).pipe(res);
       }
     });
   });
