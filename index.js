@@ -9,6 +9,8 @@ if (argv.h || argv.help) {
   console.log('-p, --port        : port (default 5080)');
   console.log('-P, --pouch-port  : pouchdb-server port (default 16984)');
   console.log('-l, --log         : pouchdb-server log level (dev|short|tiny|combined|off)');
+  console.log('-r, --remote      : remote fullfatdb (default https://registry.npmjs.org)');
+  console.log('-R, --remote-skim : remote skimdb (default https://skimdb.npmjs.com/registry)');
   console.log();
   return process.exit(0);
 }
@@ -18,10 +20,10 @@ var pouchPort = argv.P || argv['pouch-port'] || 16984;
 
 var NUM_PARALLEL_TASKS = 10;
 
-var SKIM_REMOTE = 'https://skimdb.npmjs.com/registry';
-var SKIM_LOCAL = 'http://localhost:' + pouchPort + '/skimdb';
+var FAT_REMOTE = argv.r || argv.remote || 'https://registry.npmjs.org';
+var SKIM_REMOTE = argv.R || argv['remote-skim'] || 'https://skimdb.npmjs.com/registry';
 var FAT_LOCAL = 'http://localhost:' + pouchPort + '/fullfatdb';
-var FAT_REMOTE = 'https://registry.npmjs.org';
+var SKIM_LOCAL = 'http://localhost:' + pouchPort + '/skimdb';
 
 console.log('\nWelcome!');
 console.log('To start using local-npm, just run: ');
