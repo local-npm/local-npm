@@ -158,7 +158,12 @@ Promise.resolve().then(function () {
     return queues[queueIdx];
   }
 
+  var alreadyUpdating = false;
   function updateAfterIncomingChange() {
+    if (alreadyUpdating) {
+      return;
+    }
+    alreadyUpdating = true;
     // keep a log of what the last seq we checked was
     var queue = Promise.resolve();
     fs.readFile('skim-seq.txt', {encoding: 'utf8'}, function (err, data) {
