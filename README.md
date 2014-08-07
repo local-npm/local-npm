@@ -22,7 +22,7 @@ to start the server. (Note that it will write files in whatever directory you ru
 
 Then set `npm` to point to the local server:
 
-    npm set registry http://127.0.0.1:5080/fullfatdb
+    npm set registry http://127.0.0.1:5080
 
 The same rules as for the [npm Australia mirror](http://www.npmjs.org.au/) apply here.
 
