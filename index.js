@@ -158,12 +158,7 @@ Promise.resolve().then(function () {
     return queues[queueIdx];
   }
 
-  var alreadyUpdating = false;
   function updateAfterIncomingChange() {
-    if (alreadyUpdating) {
-      return;
-    }
-    alreadyUpdating = true;
     // keep a log of what the last seq we checked was
     var queue = Promise.resolve();
     fs.readFile('skim-seq.txt', {encoding: 'utf8'}, function (err, data) {
@@ -198,6 +193,10 @@ Promise.resolve().then(function () {
     updateAfterIncomingChange();
   } else {
     skimPouch.on('uptodate', function () {
+      if (upToDate) {
+        return;
+      }
+      upToDate = true;
       fullFat.skim = SKIM_LOCAL; // internal API, probably shouldn't do this
       skimPouch.info().then(function (info) {
         return Promise.promisify(fs.writeFile)('skim-seq.txt',
