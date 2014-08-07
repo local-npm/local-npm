@@ -192,11 +192,12 @@ Promise.resolve().then(function () {
   if (upToDate) {
     updateAfterIncomingChange();
   } else {
+    var alreadyStarted = false;
     skimPouch.on('uptodate', function () {
-      if (upToDate) {
+      if (alreadyStarted) {
         return;
       }
-      upToDate = true;
+      alreadyStarted = true;
       fullFat.skim = SKIM_LOCAL; // internal API, probably shouldn't do this
       skimPouch.info().then(function (info) {
         return Promise.promisify(fs.writeFile)('skim-seq.txt',
