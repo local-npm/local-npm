@@ -124,39 +124,54 @@ Promise.resolve().then(function () {
   // start user-facing proxy server
 
   // only execute n fullFat.js operations in parallel
-  var queues = [];
-  for (var i = 0; i < NUM_PARALLEL_TASKS; i++) {
-    queues.push(Promise.resolve());
-  }
+  var queue = Promise.resolve();
 
   function processWithFullFat(docId) {
     console.log(docId + ': got request...');
     // recover by fetching with fullFat
     // wait for changes to let us know it was fetched
-    var queueIdx = docId.charCodeAt(0) % queues.length;
-    queues[queueIdx] = queues[queueIdx].then(function () {
+    queue = queue.then(function () {
       console.log(docId + ': looking up in pouch');
       return new Promise(function (resolve, reject) {
-        var changes = fatPouch.changes({
+        var changes;
+        function onError (err) {
+          finish(err);
+        }
+        var finished = false;
+        function finish (err) {
+          if (finished) {
+            return;
+          }
+          finished = true;
+          changes.cancel();
+          fullFat.removeListener('error', onError);
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        }
+        changes = fatPouch.changes({
           since: 'latest',
           live: true
         }).on('change', function onChange(change) {
           console.log(change.id + ': got change');
           if (change.id === docId) {
             console.log('successfully wrote to local fullfatdb: ' + docId);
-            changes.cancel();
-            resolve();
+            finish();
           }
         }).on('error', function (err) {
           console.error('change hit error');
-          reject(err);
+          finish(err);
+          cleanup();
         });
         console.log(docId + ': fetching in the background');
+        fullFat.on('error', onError);
         // this seq is only used by fullFat to determine the file name to write tgz's to
         fullFat.getDoc({id: docId, seq: Math.round(Math.random() * 1000000)});
       });
     });
-    return queues[queueIdx];
+    return queue;
   }
 
   function updateAfterIncomingChange() {
