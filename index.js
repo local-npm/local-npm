@@ -16,16 +16,18 @@ if (argv.h || argv.help) {
 var port = argv.p || argv.port || 5080;
 var pouchPort = argv.P || argv['pouch-port'] || 16984;
 
-console.log('\nWelcome!');
-console.log('To start using local-npm, just run: ');
-console.log('\n  $ npm set registry http://127.0.0.1:' + port + '/fullfatdb');
-
 var NUM_PARALLEL_TASKS = 10;
 
 var SKIM_REMOTE = 'https://skimdb.npmjs.com/registry';
 var SKIM_LOCAL = 'http://localhost:' + pouchPort + '/skimdb';
 var FAT_LOCAL = 'http://localhost:' + pouchPort + '/fullfatdb';
-var FAT_REMOTE = 'http://registry.npmjs.org';
+var FAT_REMOTE = 'https://registry.npmjs.org';
+
+console.log('\nWelcome!');
+console.log('To start using local-npm, just run: ');
+console.log('\n  $ npm set registry http://127.0.0.1:' + port + '/fullfatdb');
+console.log('\nTo switch back, you can run: ');
+console.log('\n  $ npm set registry ' + FAT_REMOTE);
 
 var request = require('request');
 var Promise = require('bluebird');
