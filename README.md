@@ -1,13 +1,11 @@
 local-npm
 ==========
 
-(Work in progress. Don't use this yet.)
+(Very alpha. Use with caution.)
 
 Slow npm got you down? Conference wifi flaking out at exactly the wrong time? Use `local-npm`.
 
-`local-npm` sets up an npm registry on your local machine that serves modules from npm, caches them, and then updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry.
-
-The first time you start `npm install`ing stuff, it'll be slow. Then the second time it'll be super fast, because it's all local.
+`local-npm` sets up an npm registry server on your local machine that serves modules, caches them, and then updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry. Only what you `npm install` is saved locally. 
 
 If you're organizing a conference/meetup/whatever, you can also share this local server with multiple people.  So if your teammates are constantly installing the same modules over and over again, this can save a lot of time in the long run.
 
@@ -43,7 +41,7 @@ For the command `local-npm`:
 Details
 -----
 
-`local-npm` works by basically replicating the full skimdb to a local [PouchDB Server](github.com/pouchdb/pouchdb-server). You can inspect the running database at [http://127.0.0.1:15984/_utils](http://127.0.0.1:15984/_utils).
+npm is built on top of CouchDB, so `local-npm` works by replicating the full "skimdb" database to a local [PouchDB Server](github.com/pouchdb/pouchdb-server). You can inspect the running database at [http://127.0.0.1:15984/_utils](http://127.0.0.1:15984/_utils). (Don't write to it!)
 
 The entire "skimdb" (i.e. metadata) is replicated locally, but for the "fullfatdb" (metadata plus tarballs), only what you `npm install` is stored. To start from scratch, just delete whatever directory you started the server in.
 
