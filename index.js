@@ -35,6 +35,7 @@ var pouchdbServerLite = require('./pouchdb-server-lite');
 var app = pouchdbServerLite.app;
 var PouchDB = pouchdbServerLite.PouchDB;
 
+var skimRemote = new PouchDB(SKIM_REMOTE);
 var skimPouch = new PouchDB('skimdb');
 var fatPouch = new PouchDB('fullfatdb');
 // I tend to use more than the default 10 listeners
@@ -45,14 +46,11 @@ fatPouch.setMaxListeners(NUM_PARALLEL_TASKS * 50);
 var upToDate;
 var startingTimeout = 1000;
 var backoff = 1.1;
-
-var fullFat;
 var sync;
 
-function replicateForever() {
-  var skimRemote = new PouchDB(SKIM_REMOTE);
+function replicateSkim() {
   skimRemote.info().then(function (info) {
-    sync = skimPouch.replicate.from(SKIM_REMOTE, {
+    sync = skimPouch.replicate.from(skimRemote, {
       live: true,
       batch_size: 1000
     }).on('change', function (change) {
@@ -66,16 +64,22 @@ function replicateForever() {
     }).on('error', function (err) {
       console.error('error during replication with skimdb');
       console.error(err);
-      // just keep going
-      startingTimeout *= backoff;
-      setTimeout(replicateForever, Math.round(startingTimeout));
+      restartReplication();
     });
   }).catch(function (err) {
     console.error('error doing info() on skimdb');
     console.error(err);
+    restartReplication();
   });
 }
-replicateForever();
+function restartReplication() {
+  // just keep going
+  startingTimeout *= backoff;
+  setTimeout(replicateSkim, Math.round(startingTimeout));
+}
+replicateSkim();
+
+var fullFat;
 
 // start doing exciting shit
 Promise.resolve().then(function () {
