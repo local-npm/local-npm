@@ -67,7 +67,7 @@ function replicateSkim() {
       restartReplication();
     });
   }).catch(function (err) {
-    console.error('error doing info() on skimdb');
+    console.error('error doing info() on ' + SKIM_REMOTE);
     console.error(err);
     restartReplication();
   });
@@ -123,35 +123,30 @@ Promise.resolve().then(function () {
   }
 
   function processWithFullFat(docId) {
-    console.log('request for ' + docId + '...');
+    console.log(docId + ': got request...');
     // recover by fetching with fullFat
     // wait for changes to let us know it was fetched
     var queueIdx = docId.charCodeAt(0) % queues.length;
     queues[queueIdx] = queues[queueIdx].then(function () {
-      console.log('docId is ' + docId + ', looking up in pouch');
-      return fatPouch.get(docId).catch(function (err) {
-        if (err.status !== 404) {
-          throw err;
-        }
-        return new Promise(function (resolve, reject) {
-          var changes = fatPouch.changes({
-            since: 'latest',
-            live: true
-          }).on('change', function onChange(change) {
-              console.log('got change: ' + change.id);
-              if (change.id === docId) {
-                console.log('successfully wrote to local fullfatdb: ' + docId);
-                changes.cancel();
-                resolve();
-              }
-            }).on('error', function (err) {
-              console.error('change hit error');
-              reject(err);
-            });
-          console.log('telling fullfat.js to fetch ' + docId);
-          // this seq is only used by fullFat to determine the file name to write tgz's to
-          fullFat.getDoc({id: docId, seq: Math.round(Math.random() * 1000000)});
+      console.log(docId + ': looking up in pouch');
+      return new Promise(function (resolve, reject) {
+        var changes = fatPouch.changes({
+          since: 'latest',
+          live: true
+        }).on('change', function onChange(change) {
+          console.log(change.id + ': got change');
+          if (change.id === docId) {
+            console.log('successfully wrote to local fullfatdb: ' + docId);
+            changes.cancel();
+            resolve();
+          }
+        }).on('error', function (err) {
+          console.error('change hit error');
+          reject(err);
         });
+        console.log(docId + ': fetching in the background');
+        // this seq is only used by fullFat to determine the file name to write tgz's to
+        fullFat.getDoc({id: docId, seq: Math.round(Math.random() * 1000000)});
       });
     });
     return queues[queueIdx];
@@ -198,24 +193,41 @@ Promise.resolve().then(function () {
 
 
   var server = require('http').createServer(function (req, res) {
+    var docId;
     Promise.resolve().then(function () {
       if (req.method.toLowerCase() === 'get' &&
           /^\/fullfatdb\/([^\/]+)/.test(req.url)) {
         // simple doc or attachment request (get)
-        console.log('simple doc request');
         var url = require('url').parse(req.url);
-        var docId = decodeURIComponent(url.pathname.split('/')[2]);
+        docId = decodeURIComponent(url.pathname.split('/')[2]);
+        console.log(docId + ': simple doc request');
         // check if it exists first
-        return processWithFullFat(docId);
+        return fatPouch.get(docId).catch(function (err) {
+          if (err.status === 404) {
+            console.log('not found locally: ' + docId);
+            process.nextTick(function () {
+              processWithFullFat(docId); // exec in background
+            });
+          }
+          throw err;
+        });
+      } else {
+        throw new Error('bad_local_request');
       }
     }).then(function (doc) {
-      console.log('doc exists locally, using local fat');
+      console.log(docId + ': doc exists locally');
       request.get('http://127.0.0.1:' + pouchPort + req.url).pipe(res);
     }).catch(function (err) {
-      console.error('error, need to use remote fat instead');
-      console.error(err);
-      var url = req.url.replace(/^\/fullfatdb/, '');
-      request.get(FAT_REMOTE + url).pipe(res);
+      if (err.name === 'bad_local_request') {
+        console.error('got a bad request: ' + req.url);
+        res.status(400).send({error: 'this proxy only accepts GETs to /fullfatdb'});
+      } else {
+        console.error(docId + ': no local doc, need to proxy to remote');
+        // we got an error, so let's proxy to the remote fat
+        // so we can return immediately
+        var url = req.url.replace(/^\/fullfatdb/, '');
+        request.get(FAT_REMOTE + url).pipe(res);
+      }
     });
   });
   server.listen(5080, function (err) {
@@ -233,9 +245,9 @@ Promise.resolve().then(function () {
 process.on('SIGINT', function () {
   // close gracefully
   sync.cancel();
-  fatPouch.close().then(function () {
-    return skimPouch.close();
-  }).then(function () {
+  Promise.all([fatPouch, skimPouch].map(function (pouch) {
+    return pouch.close();
+  })).then(function () {
     process.exit(0);
   });
 });
