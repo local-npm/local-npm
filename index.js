@@ -163,7 +163,6 @@ Promise.resolve().then(function () {
         }).on('error', function (err) {
           console.error('change hit error');
           finish(err);
-          cleanup();
         });
         console.log(docId + ': fetching in the background');
         fullFat.on('error', onError);
