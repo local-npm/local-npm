@@ -18,8 +18,6 @@ if (argv.h || argv.help) {
 var port = argv.p || argv.port || 5080;
 var pouchPort = argv.P || argv['pouch-port'] || 16984;
 
-var NUM_PARALLEL_TASKS = 10;
-
 var FAT_REMOTE = argv.r || argv.remote || 'https://registry.npmjs.org';
 var SKIM_REMOTE = argv.R || argv['remote-skim'] || 'https://skimdb.npmjs.com/registry';
 var FAT_LOCAL = 'http://localhost:' + pouchPort + '/fullfatdb';
@@ -44,8 +42,8 @@ var skimRemote = new PouchDB(SKIM_REMOTE);
 var skimPouch = new PouchDB('skimdb');
 var fatPouch = new PouchDB('fullfatdb');
 // I tend to use more than the default 10 listeners
-skimPouch.setMaxListeners(NUM_PARALLEL_TASKS * 100);
-fatPouch.setMaxListeners(NUM_PARALLEL_TASKS * 100);
+skimPouch.setMaxListeners(500);
+fatPouch.setMaxListeners(500);
 
 // replicate from central skimdb
 var upToDate;
@@ -133,39 +131,33 @@ Promise.resolve().then(function () {
     queue = queue.then(function () {
       console.log(docId + ': looking up in pouch');
       return new Promise(function (resolve, reject) {
-        var changes;
-        function onError (err) {
+        function onError(err) {
+          console.log(docId + ': error storing locally');
           finish(err);
         }
+        function onPut(change) {
+          if (change.id === docId) {
+            console.log(docId + ': stored locally');
+            finish();
+          }
+        }
         var finished = false;
-        function finish (err) {
+        function finish(err) {
           if (finished) {
             return;
           }
           finished = true;
-          changes.cancel();
           fullFat.removeListener('error', onError);
+          fullFat.removeListener('put', onPut);
           if (err) {
             reject(err);
           } else {
             resolve();
           }
         }
-        changes = fatPouch.changes({
-          since: 'latest',
-          live: true
-        }).on('change', function onChange(change) {
-          console.log(change.id + ': got change');
-          if (change.id === docId) {
-            console.log('successfully wrote to local fullfatdb: ' + docId);
-            finish();
-          }
-        }).on('error', function (err) {
-          console.error('change hit error');
-          finish(err);
-        });
         console.log(docId + ': fetching in the background');
         fullFat.on('error', onError);
+        fullFat.on('put', onPut);
         // this seq is only used by fullFat to determine the file name to write tgz's to
         fullFat.getDoc({id: docId, seq: Math.round(Math.random() * 1000000)});
       });
