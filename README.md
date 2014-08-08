@@ -12,23 +12,17 @@ If you're organizing a conference/meetup/whatever, you can also share this local
 Usage
 ------
 
-```bash
-$ npm install -g local-npm
-```
+    $ npm install -g local-npm
 
 Then
 
-```bash
-$ local-npm
-```
- 
+    $ local-npm
+    
 to start the server. (Note that it will write files in whatever directory you run it from.)
 
 Then set `npm` to point to the local server:
 
-```bash
-$ npm set registry http://127.0.0.1:5080
-```
+    $ npm set registry http://127.0.0.1:5080
 
 The same rules as for the [npm Australia mirror](http://www.npmjs.org.au/) apply here.
 
