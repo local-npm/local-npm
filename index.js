@@ -119,7 +119,9 @@ function restartReplication() {
   setTimeout(replicateSkim, Math.round(startingTimeout));
 }
 replicateSkim();
+
 app.listen(port);
+
 process.on('SIGINT', function () {
   // close gracefully
   sync.cancel();
