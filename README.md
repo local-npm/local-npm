@@ -38,7 +38,7 @@ For the command `local-npm`:
 ```
 -h, --help        : show help
 -p, --port        : port (default 5080)
--P, --pouch-port  : pouchdb-server port (default 16984)
+-P, --pouch-port  : pouchdb-server port (default ≈)
 -l, --log         : pouchdb-server log level (dev|short|tiny|combined|off)
 -r, --remote      : remote fullfatdb (default https://registry.npmjs.org)
 -R, --remote-skim : remote skimdb (default https://skimdb.npmjs.com/registry)
