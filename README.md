@@ -7,26 +7,24 @@ Slow npm got you down? Conference wi-fi flaking out just when you need it? Use `
 
 If you're organizing a conference/meetup/whatever, you can also share this local server with multiple people.  So if your teammates are constantly installing the same modules over and over again, this can save a lot of time in the long run.
 
-This is alpha software. Use with caution.
-
-Install
+Usage
 ------
 
-    npm install -g local-npm
+    $ npm install -g local-npm
 
 Then
 
-    local-npm
+    $ local-npm
     
 to start the server. (Note that it will write files in whatever directory you run it from.)
 
 Then set `npm` to point to the local server:
 
-    npm set registry http://127.0.0.1:5080
+    $ npm set registry http://127.0.0.1:5080
 
 The same rules as for the [npm Australia mirror](http://www.npmjs.org.au/) apply here.
 
-Command line usage
+Command line options
 ----
 
 For the command `local-npm`:
