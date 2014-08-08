@@ -232,7 +232,16 @@ Promise.resolve().then(function () {
         }
         console.log(docId + ': simple doc request');
         // check if it exists first
-        return fatPouch.get(docId).catch(function (err) {
+        return fatPouch.get(docId).then(function (doc) {
+          if (!Object.keys(doc._attachments).length) {
+            // in some weirdo cases, fullfat puts a doc
+            // with 0 attachments. in these cases, just fetch it again
+            console.log(docId + ': no attachments, need to refresh');
+            var err = new Error('not_found');
+            err.status = 404;
+            throw err;
+          }
+        }).catch(function (err) {
           if (err.status === 404) {
             console.log('not found locally: ' + docId);
             process.nextTick(function () {
