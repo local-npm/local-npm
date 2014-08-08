@@ -43,7 +43,7 @@ For the command `local-npm`:
 How it works
 -----
 
-npm is built on top of CouchDB, so `local-npm` works by replicating the full "skimdb" database to a local [PouchDB Server](github.com/pouchdb/pouchdb-server). You can inspect the running database at [http://127.0.0.1:15984/_utils](http://127.0.0.1:15984/_utils). (Don't write to it!)
+npm is built on top of CouchDB, so `local-npm` works by replicating the full "skimdb" database to a local [PouchDB Server](https://github.com/pouchdb/pouchdb-server). You can inspect the running database at [http://127.0.0.1:15984/_utils](http://127.0.0.1:15984/_utils). (Don't write to it!)
 
 The entire "skimdb" (metadata) is replicated locally, but for the "fullfatdb" (metadata plus tarballs), only what you `npm install` is stored. To start from scratch, just delete whatever directory you started the server in.
 
