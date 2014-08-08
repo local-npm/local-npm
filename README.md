@@ -1,9 +1,9 @@
 local-npm
 ==========
 
-Slow npm got you down? Conference wi-fi flaking out just when you need it? Use `local-npm`.
+Sometimes npm is slow. Or sometimes you're at a conference where the wi-fi sucks. Or sometimes you live in Australia. These things happen.
 
-`local-npm` sets up a local npm server that serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry &ndash; only what you `npm install` is saved locally. 
+`local-npm` is a Node daemon that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry. Only what you explicitly `npm install` is saved locally. 
 
 If you're organizing a conference/meetup/whatever, you can also share this local server with multiple people.  So if your teammates are constantly installing the same modules over and over again, this can save a lot of time in the long run.
 
@@ -47,6 +47,6 @@ The entire "skimdb" (metadata) is replicated locally, but for the "fullfatdb" (m
 
 When you `npm install` a module, all its versions are stored in the local database. `local-npm` uses [fullfat-registry](https://github.com/npm/npm-fullfat-registry), so this process is guaranteed to be the same one that generates the fullfatdb itself.
 
-CouchDB has a changes feed, so `local-npm` just listens to the `skimdb` changes to know when it needs to re-fetch an outdated module. Changes should replicate within a few seconds of being published.
+CouchDB has a changes feed, so `local-npm` just listens to the `skimdb` changes to know when it needs to refresh an outdated module. Changes should replicate within a few seconds of being published.
 
-You can't `npm publish` from the local registry. So be sure to switch back to the main registry before you try to publish! `npmrc` can be really helpful for switching back and forth; the [Australia mirror page](http://www.npmjs.org.au/) has some good instructions on that.
+You can't `npm publish` from the local registry. So be sure to switch back to the main registry before you try to publish!
