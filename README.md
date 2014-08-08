@@ -24,6 +24,10 @@ Then set `npm` to point to the local server:
 
     $ npm set registry http://127.0.0.1:5080
 
+To switch back, you can do:
+
+    $ npm set registry https://registry.npmjs.org
+
 The same rules as for the [npm Australia mirror](http://www.npmjs.org.au/) apply here.
 
 Command line options
@@ -43,7 +47,7 @@ For the command `local-npm`:
 How it works
 -----
 
-npm is built on top of CouchDB, so `local-npm` works by replicating the full "skimdb" database to a local [PouchDB Server](https://github.com/pouchdb/pouchdb-server). You can inspect the running database at [http://127.0.0.1:15984/_utils](http://127.0.0.1:15984/_utils). (Don't write to it!)
+npm is built on top of CouchDB, so `local-npm` works by replicating the full "skimdb" database to a local [PouchDB Server](https://github.com/pouchdb/pouchdb-server). You can inspect the running database at [http://127.0.0.1:16984/_utils](http://127.0.0.1:16984/_utils). (Don't write to it!)
 
 The entire "skimdb" (metadata) is replicated locally, but for the "fullfatdb" (metadata plus tarballs), only what you `npm install` is stored. To start from scratch, just delete whatever directory you started the server in.
 
