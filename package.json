@@ -21,7 +21,7 @@
     "express": "4.6.1",
     "express-pouchdb": "^0.5.1",
     "morgan": "^1.2.2",
-    "npm-fullfat-registry": "^1.1.4",
+    "npm-fullfat-registry": "nolanlawson/npm-fullfat-registry",
     "optimist": "^0.6.1",
     "pouchdb": "pouchdb/pouchdb",
     "request": "^2.39.0",

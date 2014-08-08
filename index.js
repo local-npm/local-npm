@@ -135,7 +135,7 @@ Promise.resolve().then(function () {
           console.log(docId + ': error storing locally');
           finish(err);
         }
-        function onPut(change) {
+        function onResolve(change) {
           if (change.id === docId) {
             console.log(docId + ': stored locally');
             finish();
@@ -148,7 +148,8 @@ Promise.resolve().then(function () {
           }
           finished = true;
           fullFat.removeListener('error', onError);
-          fullFat.removeListener('put', onPut);
+          fullFat.removeListener('put', onResolve);
+          fullFat.removeListener('unchanged', onResolve);
           if (err) {
             reject(err);
           } else {
@@ -157,7 +158,8 @@ Promise.resolve().then(function () {
         }
         console.log(docId + ': fetching in the background');
         fullFat.on('error', onError);
-        fullFat.on('put', onPut);
+        fullFat.on('put', onResolve);
+        fullFat.on('unchanged', onResolve);
         // this seq is only used by fullFat to determine the file name to write tgz's to
         fullFat.getDoc({id: docId, seq: Math.round(Math.random() * 1000000)});
       });
