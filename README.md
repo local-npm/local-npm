@@ -40,11 +40,15 @@ For the command `local-npm`:
 -R, --remote-skim : remote skimdb (default https://skimdb.npmjs.com/registry)
 ```
 
-Details
+How it works
 -----
 
 npm is built on top of CouchDB, so `local-npm` works by replicating the full "skimdb" database to a local [PouchDB Server](github.com/pouchdb/pouchdb-server). You can inspect the running database at [http://127.0.0.1:15984/_utils](http://127.0.0.1:15984/_utils). (Don't write to it!)
 
-The entire "skimdb" (i.e. metadata) is replicated locally, but for the "fullfatdb" (metadata plus tarballs), only what you `npm install` is stored. To start from scratch, just delete whatever directory you started the server in.
+The entire "skimdb" (metadata) is replicated locally, but for the "fullfatdb" (metadata plus tarballs), only what you `npm install` is stored. To start from scratch, just delete whatever directory you started the server in.
 
-You can't `npm publish` from your local registry. So be sure to switch back to the main registry before you try to publish!
+When you `npm install` a module, all its versions are stored in the local database. `local-npm` uses [fullfat-registry](https://github.com/npm/npm-fullfat-registry), so this process is guaranteed to be the same one that generates the fullfatdb itself.
+
+CouchDB has a changes feed, so `local-npm` just listens to the `skimdb` changes to know when it needs to re-fetch an outdated module. Changes should replicate within a few seconds of being published.
+
+You can't `npm publish` from the local registry. So be sure to switch back to the main registry before you try to publish! `npmrc` can be really helpful for switching back and forth; the [Australia mirror page](http://www.npmjs.org.au/) has some good instructions on that.
