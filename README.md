@@ -3,7 +3,7 @@ local-npm
 
 Sometimes npm is slow. Or sometimes you're at a conference where the wi-fi sucks. Or sometimes you live in Australia. These things happen.
 
-`local-npm` is a Node daemon that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry. Only what you explicitly `npm install` is saved locally. 
+`local-npm` is a Node daemon that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry. Only the modules that you explicitly `npm install` are saved locally. 
 
 When you first install a module, it'll be fetched from the main npm registry. After that, the module and all its dependencies are stored in a local database (including all versions), so you can expect subsequent installs to be much faster.
 
