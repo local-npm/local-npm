@@ -54,6 +54,8 @@ $ local-npm \
 
 In this way, you can create a daisy chain of awesome.
 
+**Protip #2**: You can see which modules are being downloaded in real time by pointing your favorite browser to [http://127.0.0.1:16984/fullfatdb/_changes?feed=continuous&since=now&heartbeat=30000](http://127.0.0.1:16984/fullfatdb/_changes?feed=continuous&since=now&heartbeat=30000).
+
 
 How it works
 -----
