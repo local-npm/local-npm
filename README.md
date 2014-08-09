@@ -44,6 +44,17 @@ For the command `local-npm`:
 -R, --remote-skim : remote skimdb (default https://skimdb.npmjs.com/registry)
 ```
 
+**Protip**: You can replicate from your friend's `local-npm` to your own `local-npm` by simply pointing at it:
+
+```
+$ local-npm \
+   --remote http://<friends_hostname>:5080 \
+   --remote-skim http://<friends_hostname>:16984/skimdb
+```
+
+In this way, you can create a daisy chain of awesome.
+
+
 How it works
 -----
 
