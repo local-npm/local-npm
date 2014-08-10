@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./index.js"
+    "start": "node ./bin.js"
   },
   "author": {
     "name": "Nolan Lawson",
@@ -30,7 +30,5 @@
     "level": "^0.18.0",
     "yargs": "^1.3.1"
   },
-  "bin": {
-    "local-npm": "./index.js"
-  }
+  "bin":  "./bin.js"
 }
