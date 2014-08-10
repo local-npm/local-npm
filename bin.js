@@ -5,7 +5,7 @@ if (argv.h || argv.help) {
   logger.help('\nusage:');
   logger.help('-h, --help        : show help');
   logger.help('-p, --port        : port (default 5080)');
-  logger.help('-l, --log         : pouchdb-server log level (dev|short|tiny|combined|off)');
+  logger.help('-l, --log         : pouchdb-server log level (error|warn|info|debug)');
   logger.help('-r, --remote      : remote fullfatdb (default https://registry.npmjs.org)');
   logger.help('-R, --remote-skim : remote skimdb (default https://skimdb.npmjs.com/registry)\n');
   return process.exit(0);

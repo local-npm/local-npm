@@ -8,14 +8,14 @@ var favicon = require('serve-favicon');
 var argv    = require('yargs').argv;
 var logger = require('./logger');
 var port    = argv.P || argv['pouch-port'] || 16984;
-var loglevel  = argv.l || argv.log || 'dev';
+var loglevel  = require('./levels')[argv.l || argv.log || 'info'];
 var app     = express();
 
 
 app.use(favicon(__dirname + '/favicon.ico'));
 app.use(require('compression')());
-if (loglevel !== 'off') {
-  app.use(require('morgan')(loglevel));
+if (loglevel > 1) {
+  app.use(require('morgan')('dev'));
 }
 app.use(corser.create({
   methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE'],

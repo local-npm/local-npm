@@ -8,12 +8,12 @@ var express = require('express');
 var level = require('level');
 var through = require('through2');
 var logger = require('./logger');
-
+var levels = require('./levels');
 module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, loglevel) {
   FAT_REMOTE = FAT_REMOTE || 'https://registry.npmjs.org';
   SKIM_REMOTE =  SKIM_REMOTE || 'https://skimdb.npmjs.com/registry';
   port = port  || 5080;
-  loglevel = loglevel || 'dev';
+  loglevel = levels[loglevel || 'info'];
   var startingTimeout = 1000;
   logger.silly('\nWelcome!');
   logger.info('To start using local-npm, just run: ');
@@ -30,8 +30,8 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, loglevel) {
   var base = 'http://localhost:' + port + '/tarballs';
 
 
-  if (loglevel !== 'off') {
-    app.use(require('morgan')(loglevel));
+  if (loglevel > 1) {
+    app.use(require('morgan')('dev'));
   }
   app.use(require('compression')());
   app.use(require('serve-favicon')(__dirname + '/favicon.ico'));
@@ -107,12 +107,12 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, loglevel) {
       }).on('uptodate', function () {
         logger.verbose('local skimdb is up to date');
       }).on('error', function (err) {
-        logger.error('error during replication with skimdb');
+        logger.warn('error during replication with skimdb');
         logger.error(err);
         restartReplication();
       });
     }).catch(function (err) {
-      logger.error('error doing logger.info() on ' + SKIM_REMOTE);
+      logger.warn('error doing logger.info() on ' + SKIM_REMOTE);
       logger.error(err);
       restartReplication();
     });
