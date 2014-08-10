@@ -1,7 +1,7 @@
 'use strict';
 var colors = require('colors');
 var argv = require('yargs').argv;
-var level  = require('./levels')[argv.l || argv.log || 'info'];
+var level  = require('./levels')(argv.l || argv.log);
 function log(msg) {
   if (level > 3) {
     msg = (Date()).toString().grey + msg;

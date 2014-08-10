@@ -13,7 +13,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, loglevel) {
   FAT_REMOTE = FAT_REMOTE || 'https://registry.npmjs.org';
   SKIM_REMOTE =  SKIM_REMOTE || 'https://skimdb.npmjs.com/registry';
   port = port  || 5080;
-  loglevel = levels[loglevel || 'info'];
+  loglevel = levels(loglevel);
   var startingTimeout = 1000;
   logger.silly('\nWelcome!');
   logger.info('To start using local-npm, just run: ');

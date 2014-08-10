@@ -8,7 +8,7 @@ var favicon = require('serve-favicon');
 var argv    = require('yargs').argv;
 var logger = require('./logger');
 var port    = argv.P || argv['pouch-port'] || 16984;
-var loglevel  = require('./levels')[argv.l || argv.log || 'info'];
+var loglevel  = require('./levels')(argv.l || argv.log);
 var app     = express();
 
 
