@@ -4,7 +4,7 @@ var argv = require('yargs').argv;
 var level  = require('./levels')(argv.l || argv.log);
 function log(msg) {
   if (level > 3) {
-    msg = (Date()).toString().grey + msg;
+    msg = ('[' + (Date()).toString() + ']').grey + msg;
   }
   console.log(msg);
 }
@@ -74,7 +74,8 @@ exports.cached = function (pkg, version) {
   if (typeof version !== 'string') {
     version = String(version);
   }
-  log('downloaded '.grey + pkg.green + ' at version '.grey + version.green);
+  log('downloaded '.grey + pkg.green + ' at version '.grey + version.green +
+    'and saved it locally'.grey);
 };
 exports.offline = function (pkg) {
   if (level > 0) {
