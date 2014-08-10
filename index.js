@@ -40,7 +40,19 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
       var docs = changeTarballs(base, doc);
       res.json(docs);
     }).catch(function (e) {
-      request.get(FAT_REMOTE + req.url).pipe(res);
+      request.get({
+        url: SKIM_REMOTE + req.url,
+        json: true
+      }, function (e, r, doc) {
+        if (e) {
+          return res.send(500, e);
+        }
+        if (r.statusCode > 399) {
+          return res.send(r.statusCode);
+        }
+        var docs = changeTarballs(base, doc);
+        res.json(docs);
+      });
     });
   });
   app.get('/:name/:version', function (req, res) {
