@@ -36,11 +36,19 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
   app.use(require('compression')());
   app.use(require('serve-favicon')(__dirname + '/favicon.ico'));
   app.get('/:name', function (req, res) {
-    skimPouch.get(req.params.name).then(function (doc) {
+    skimPouch.get(req.params.name).catch(function (e) {
+      return skimRemote.get(req.params.name);
+    }).then(function (doc) {
       var docs = changeTarballs(base, doc);
       res.json(docs);
-    }).catch(function (e) {
-      request.get(FAT_REMOTE + req.url).pipe(res);
+    }, function (e) {
+      var status = e.status || e.statusCode;
+      var msg = e.message || e.error;
+      if (status && status > 399) {
+        res.send(status, msg);
+      } else {
+        res.send(500, msg || 'unknown error');
+      }
     });
   });
   app.get('/:name/:version', function (req, res) {
