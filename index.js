@@ -66,7 +66,6 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
       var get = request.get(FAT_REMOTE + '/' + req.params.name + '/-/' + id + '.tgz');
       get.on('error', function () {
         res.send(500, 'you are offline and this package isn\'t cached');
-        restartReplication();
       });
       get.pipe(res);
       get.pipe(through(function (chunk, _, next) {
