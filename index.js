@@ -42,7 +42,11 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
       var docs = changeTarballs(base, doc);
       res.json(docs);
     }).catch(function (e) {
-      request.get(FAT_REMOTE + req.url).pipe(res);
+      var get = request.get(FAT_REMOTE + req.url);
+      get.on('error', function () {
+        sendError(req, res);
+      });
+      get.pipe(res);
     });
   });
   app.get('/:name/:version', function (req, res) {
@@ -51,7 +55,11 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
     }).then(function (doc) {
       res.json(changeTarballs(base, doc).versions[req.params.version]);
     }).catch(function (e) {
-      request.get(FAT_REMOTE + req.url).pipe(res);
+      var get = request.get(FAT_REMOTE + req.url);
+      get.on('error', function () {
+        sendError(req, res);
+      });
+      get.pipe(res);
     });
   });
   app.get('/tarballs/:name/:version.tgz', function (req, res) {
@@ -65,7 +73,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
       var buffs = [];
       var get = request.get(FAT_REMOTE + '/' + req.params.name + '/-/' + id + '.tgz');
       get.on('error', function () {
-        res.send(500, 'you are offline and this package isn\'t cached');
+        sendError(req, res);
         restartReplication();
       });
       get.pipe(res);
@@ -83,6 +91,10 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
       }));
     });
   });
+  function sendError(req, res) {
+    console.error('offline, cannot fetch module: ' + req.params.name);
+    res.send(500, {err: "offline"});
+  }
   function changeTarballs(base, doc) {
     Object.keys(doc.versions).forEach(function (key) {
       doc.versions[key].dist.tarball = base + '/' + doc.name + '/' + key + '.tgz';
