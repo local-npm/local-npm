@@ -1,0 +1,88 @@
+.input-group {
+    max-width: 175px;
+    min-width: 125px;
+}
+
+@media (max-width: 767px) {
+    .jumbotron h1 {
+        font-size: 24px;
+    }
+    .jumbotron p {
+        font-size: 18px;
+    }
+    .jumbotron {
+        padding: 8px 18px;
+    }
+    .btn {
+      font-size: 12px;
+    }
+    .table > td,th {
+      font-size: 12px;
+    }
+    input.form-control { 
+      font-size: 12px;
+    }
+    .hide-on-mobile {
+        display: none;
+    }
+    .container {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    body {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+}
+
+.table > td.fixed-width {
+  width: 150px;
+}
+
+img.gravatar {
+    width: 32px;
+    height: 32px;
+}
+
+@media (min-width: 768px) {
+    .details-body {
+        margin: 0 100px 0 50px;
+    }
+    .jumbotron.details-jumbotron {
+        padding: 20px 50px;
+    }
+    .jumbotron {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .detail-container {
+        margin-right:auto;
+        margin-left:100px;
+    }
+    .input-group {
+        min-width: 175px;
+    }
+}
+
+.maintainer {
+    margin-top: 2px;
+}
+
+.break-words {
+    word-break: break-word;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.btn-paginate {
+    min-width: 100px;
+    max-width: 150px;
+    margin: 0 2px;
+}
+
+.offline-warning {
+    padding: 5px 10px;
+}

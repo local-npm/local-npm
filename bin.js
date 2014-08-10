@@ -14,6 +14,7 @@ if (argv.h || argv.help) {
 var FAT_REMOTE = argv.r || argv.remote;
 var SKIM_REMOTE = argv.R || argv['remote-skim'];
 var port = argv.p || argv.port;
+var pouchPort = argv.P || argv['pouch-port'] || 16984;
 
 var loglevel  = argv.l || argv.log;
-require('./index')(FAT_REMOTE, SKIM_REMOTE, port, loglevel);
+require('./index')(FAT_REMOTE, SKIM_REMOTE, port, pouchPort, loglevel);

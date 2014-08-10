@@ -9,7 +9,8 @@ var level = require('level');
 var through = require('through2');
 var logger = require('./logger');
 var levels = require('./levels');
-module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, loglevel) {
+
+module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, loglevel) {
   FAT_REMOTE = FAT_REMOTE || 'https://registry.npmjs.org';
   SKIM_REMOTE =  SKIM_REMOTE || 'https://skimdb.npmjs.com/registry';
   port = port  || 5080;
@@ -20,6 +21,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, loglevel) {
   logger.code('\n  $ npm set registry http://127.0.0.1:' + port);
   logger.info('\nTo switch back, you can run: ');
   logger.code('\n  $ npm set registry ' + FAT_REMOTE);
+  logger.info('\nA simple npm-like UI is available here: http://127.0.0.1:' + port + '/_browse');
 
   var backoff = 1.1;
   var app = express();
@@ -35,6 +37,26 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, loglevel) {
   }
   app.use(require('compression')());
   app.use(require('serve-favicon')(__dirname + '/favicon.ico'));
+
+  //
+  // rudimentary UI based on npm-browser
+  //
+  app.use('/_browse', express.static(__dirname + '/www'));
+  function redirectToSkimdb(req, res) {
+    var skimUrl = 'http://localhost:' + pouchPort + '/skimdb';
+    var get = request.get(req.originalUrl.replace(/^\/_skimdb/, skimUrl));
+    get.on('error', function (err) {
+      console.error("couldn't proxy to skimdb");
+      console.error(err);
+    });
+    get.pipe(res);
+  }
+  app.get('/_skimdb', redirectToSkimdb);
+  app.get('/_skimdb*', redirectToSkimdb);
+
+  //
+  // actual server logic
+  //
   app.get('/:name', function (req, res) {
     skimLocal.get(req.params.name).catch(function () {
       return skimRemote.get(req.params.name);
