@@ -54,8 +54,6 @@ $ local-npm \
 
 In this way, you can create a daisy chain of awesome.
 
-**Protip #2**: You can see which modules are being downloaded in real time by pointing your favorite browser to [http://127.0.0.1:16984/fullfatdb/_changes?feed=continuous&since=now&heartbeat=30000](http://127.0.0.1:16984/fullfatdb/_changes?feed=continuous&since=now&heartbeat=30000).
-
 
 How it works
 -----
@@ -63,8 +61,6 @@ How it works
 npm is built on top of CouchDB, so `local-npm` works by replicating the full "skimdb" database to a local [PouchDB Server](https://github.com/pouchdb/pouchdb-server). You can inspect the running database at [http://127.0.0.1:16984/_utils](http://127.0.0.1:16984/_utils). (Don't write to it!)
 
 The entire "skimdb" (metadata) is replicated locally, but for the "fullfatdb" (metadata plus tarballs), only what you `npm install` is stored. To start from scratch, just delete whatever directory you started the server in.
-
-When you `npm install` a module, all its versions are stored in the local database. `local-npm` uses [fullfat-registry](https://github.com/npm/npm-fullfat-registry), so this process is guaranteed to be the same one that generates the fullfatdb itself.
 
 CouchDB has a changes feed, so `local-npm` just listens to the `skimdb` changes to know when it needs to refresh an outdated module. Changes should replicate within a few seconds of being published.
 
