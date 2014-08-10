@@ -26,6 +26,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, loglevel) {
   var PouchDB = require('./pouchdb-server-lite').PouchDB;
   var skimRemote = new PouchDB(SKIM_REMOTE);
   var skimLocal = new PouchDB('skimdb');
+  var tarballsDB = new PouchDB('tarballs');
   var db = level('./binarydb');
   var base = 'http://localhost:' + port + '/tarballs';
 
@@ -80,6 +81,18 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, loglevel) {
           logger.cached(req.params.name, req.params.version);
           if (err) {
             logger.info(err);
+          } else {
+            // for debugging with the changes feed
+            tarballsDB.put({
+              _id: id + '.tgz',
+              module: req.params.name,
+              version: req.params.version,
+              timestamp: new Date().toJSON(),
+              size: buff.length
+            }).catch(function (err) {
+              console.error('unable to store tarball event data: ' + id);
+              console.error(err);
+            });
           }
         });
       }));
