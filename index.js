@@ -17,7 +17,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
   var startingTimeout = 1000;
   logger.silly('\nWelcome!');
   logger.info('To start using local-npm, just run: ');
-  logger.code('\n  $ npm set registry http://127.0.0.1:' + port);
+  logger.code('\n  $ npm set registry ' + urlBase);
   logger.info('\nTo switch back, you can run: ');
   logger.code('\n  $ npm set registry ' + FAT_REMOTE);
   logger.info('\nA simple npm-like UI is available here: http://127.0.0.1:' + port + '/_browse');
@@ -131,9 +131,6 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
     });
     return doc;
   }
-  app.all('/*', function (req, res) {
-    res.send(500);
-  });
   var sync;
   function replicateSkim() {
     skimRemote.info().then(function (info) {
