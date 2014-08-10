@@ -54,6 +54,10 @@ $ local-npm \
 
 In this way, you can create a daisy chain of awesome.
 
+**Protip 2**: You can see which tarballs were stored by reading the changes feed for the `tarballs` db. Just point your favorite browser to [http://localhost:16984/tarballs/_changes?since=0&feed=continuous&heartbeat=30000](http://localhost:16984/tarballs/_changes?since=0&feed=continuous&heartbeat=30000).
+
+You can use `include_docs=true` to see more metadata (module name, version, date, tarball size), and you can use `since=now` to only see what's currently being added.
+
 
 How it works
 -----
