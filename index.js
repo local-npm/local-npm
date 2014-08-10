@@ -60,6 +60,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
       }
       var buffs = [];
       var get = request.get(FAT_REMOTE + '/' + req.params.name + '/-/' + id + '.tgz');
+      get.on('error', restartReplication);
       get.pipe(res);
       get.pipe(through(function (chunk, _, next) {
         buffs.push(chunk);
