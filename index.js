@@ -25,7 +25,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
   var app = express();
   var PouchDB = require('./pouchdb-server-lite').PouchDB;
   var skimRemote = new PouchDB(SKIM_REMOTE);
-  var skimPouch = new PouchDB('skimdb');
+  var skimLocal = new PouchDB('skimdb');
   var base = 'http://localhost:' + port + '/tarballs';
   var level = require('level');
   var db = level('./binarydb');
@@ -36,7 +36,9 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
   app.use(require('compression')());
   app.use(require('serve-favicon')(__dirname + '/favicon.ico'));
   app.get('/:name', function (req, res) {
-    skimPouch.get(req.params.name).then(function (doc) {
+    skimLocal.get(req.params.name).catch(function () {
+      return skimRemote.get(req.params.name);
+    }).then(function (doc) {
       var docs = changeTarballs(base, doc);
       res.json(docs);
     }).catch(function (e) {
@@ -44,7 +46,9 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
     });
   });
   app.get('/:name/:version', function (req, res) {
-    skimPouch.get(req.params.name).then(function (doc) {
+    skimLocal.get(req.params.name).catch(function () {
+      return skimRemote.get(req.params.name);
+    }).then(function (doc) {
       res.json(changeTarballs(base, doc).versions[req.params.version]);
     }).catch(function (e) {
       request.get(FAT_REMOTE + req.url).pipe(res);
@@ -71,7 +75,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
       }, function (next) {
         next();
         var buff = Buffer.concat(buffs);
-        db.put(id, buff, function (err){
+        db.put(id, buff, function (err) {
           if (err) {
             log(err);
           }
@@ -91,7 +95,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
   var sync;
   function replicateSkim() {
     skimRemote.info().then(function (info) {
-      sync = skimPouch.replicate.from(skimRemote, {
+      sync = skimLocal.replicate.from(skimRemote, {
         live: true,
         batch_size: 2000
       }).on('change', function (change) {
@@ -124,7 +128,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
     // close gracefully
     sync.cancel();
     db.close(function () {
-      skimPouch.close().then(function () {
+      skimLocal.close().then(function () {
         process.exit();
       }, function () {
         process.exit();
