@@ -54,6 +54,12 @@ $ local-npm \
 
 In this way, you can create a daisy chain of awesome.
 
+Browser UI
+------
+
+A rudimentary npm-like UI that allows you to search modules and see their descriptions can be found at [http://localhost:5080/_browse](http://localhost:5080/_browse).
+
+If you haven't finished replicating the remote skimdb, then not all the modules will be visible yet.
 
 How it works
 -----

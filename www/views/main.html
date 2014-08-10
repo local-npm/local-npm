@@ -1,0 +1,69 @@
+
+<html ng-controller="MainCtrl">
+  <body>
+    <div class="jumbotron">
+      <h1>local npm</h1>
+      <p class="lead"><br/>
+        npm, on your local machine
+      </p>
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <td>
+            <div class="input-group">
+              <div class="input-group-addon"><i class="glyphicon glyphicon-search"></i></div>
+              <input class="form-control" ng-model="pageService.query" ng-change="performSearch()" placeholder="Search"/>
+            </div>
+          </td>
+          <td colspan="2">
+            <div class="pull-right">
+              <table>
+                <tr>
+                  <td>
+                    <button ng-click="previousPage()" ng-show="pageService.pageStack.length &gt; 0" class="btn btn-paginate">
+                      Previous
+                    </button>
+                  </td>
+                  <td>
+                    <button ng-click="nextPage()" ng-class="{invisible: pageService.page.length < 10}" class="btn btn-primary btn-paginate">
+                      Next
+                    </button>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th class="hide-on-mobile">Maintainers</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="doc in pageService.page">
+          <td class="fixed-width break-words">
+            <a ng-href="#/{{doc._id}}" href="#">{{doc.name}}</a>
+          </td>
+          <td>
+            <span class="break-words">
+              {{doc.description || '(None)'}}
+            </span>
+          </td>
+          <td class="fixed-width hide-on-mobile" ng-switch="doc.maintainers.length">
+            <span ng-switch-when="0">(None)</span>
+            <div ng-switch-default>
+              <span ng-repeat="maintainer in doc.maintainers">
+                <a ng-href="https://www.npmjs.org/~{{maintainer.name}}" href="#" target="_blank">{{maintainer.name + ($last ? '' : ',')}}</a>
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="footer">
+      <p>Brought to you by &#20;<a href="http://pouchdb.com">PouchDB</a>. You can &#20;<a href="https://github.com/nolanlawson/local-npm">fork this project on GitHub</a>.</p>
+    </div>
+  </body>
+</html>

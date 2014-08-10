@@ -1,0 +1,84 @@
+<div class="detail-container">
+  <div class="jumbotron details-jumbotron">
+    <div style="text-align:left;">
+      <h5 class="text-muted">
+        <a href="#" ng-href="#/">
+          <i class="glyphicon glyphicon-arrow-left"></i> Back
+        </a>
+      </h5>
+    </div>
+    <div style="text-align:left;">
+      <small class="text-muted pull-right">
+        <a href="#" ng-href="https://www.npmjs.org/package/{{module._id}}" target="_blank">
+          <i class="glyphicon glyphicon-export"></i> View on npm
+        </a>
+      </small>
+      <h1>{{module.name}}</h1>
+      <p>{{module.description}}</p>
+      <pre>$ npm install {{module._id}}</pre>
+    </div>
+  </div>
+  <div class="details-body">
+    <table class="table table-striped details-table">
+      <tr>
+        <td>Last Published By</td>
+        <td>
+          <div class="maintainer">
+            <a target="_blank" href="#" ng-href="https://www.npmjs.org/~{{lastPublishedBy.name}}">
+              <img class="gravatar" ng-src="{{getGravatarUrl(lastPublishedBy)}}"/>
+              {{lastPublishedBy.name || lastPublishedBy.email}}
+            </a>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>Maintainers</td>
+        <td>
+          <div class="maintainer" ng-repeat="maintainer in module.maintainers">
+            <a target="_blank" href="#" ng-href="https://www.npmjs.org/~{{maintainer.name}}">
+              <img class="gravatar" ng-src="{{getGravatarUrl(maintainer)}}"/>
+              {{maintainer.name || maintainer.email}}
+            </a>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>Version</td>
+        <td><strong>{{latestName}}</strong> <span class="text-muted">last updated {{lastPublishedTimeRelative}}</span></td>
+      </tr>
+      <tr>
+        <td>Keywords</td>
+        <td><span ng-repeat="keyword in module.keywords">{{keyword + ($last ? '' : ', ')}}</span></td>
+      </tr>
+      <tr>
+        <td>Repository</td>
+        <td>
+          <a href="#" ng-href="{{module.repository.url}}" target="_blank">
+            {{module.repository.url}}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td>Homepage</td>
+        <td>
+          <a href="#" ng-href="{{module.homepage}}" target="_blank">
+            {{module.homepage}}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td>Bugs</td>
+        <td>
+          <a href="#" ng-href="{{module.bugs.url}}" target="_blank">
+            {{module.bugs.url}}
+          </a>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div>
+    <h3>Readme</h3>
+    <div ng-bind-html="renderedMarkdown">
+    </div>
+  </div>
+</div>
