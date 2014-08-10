@@ -4,7 +4,8 @@
   "description": "npm, on your local disk",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./bin.js"
   },
   "author": {
     "name": "Nolan Lawson",
@@ -21,13 +22,13 @@
     "express": "4.6.1",
     "express-pouchdb": "^0.5.1",
     "morgan": "^1.2.2",
-    "npm-fullfat-registry": "nolanlawson/npm-fullfat-registry",
-    "optimist": "^0.6.1",
     "pouchdb": "pouchdb/pouchdb",
     "request": "^2.39.0",
-    "serve-favicon": "^2.0.1"
+    "serve-favicon": "^2.0.1",
+    "through2": "^0.6.0",
+    "compression": "^1.0.10",
+    "level": "^0.18.0",
+    "yargs": "^1.3.1"
   },
-  "bin": {
-    "local-npm": "./index.js"
-  }
+  "bin":  "./bin.js"
 }

@@ -5,21 +5,21 @@
 var express = require('express');
 var corser  = require('corser');
 var favicon = require('serve-favicon');
-var argv    = require('optimist').argv;
+var argv    = require('yargs').argv;
 var port    = argv.P || argv['pouch-port'] || 16984;
 var logger  = argv.l || argv.log || 'dev';
 var app     = express();
 
 app.use(favicon(__dirname + '/favicon.ico'));
+app.use(require('compression')());
+if (logger !== 'off') {
+  app.use(require('morgan')(logger));
+}
 app.use(corser.create({
   methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE'],
   supportsCredentials: true,
   requestHeaders: corser.simpleRequestHeaders.concat(["Authorization", "Origin", "Referer"])
 }));
-
-if (logger !== 'off') {
-  app.use(require('morgan')(logger));
-}
 
 var expressPouchDB = require('express-pouchdb');
 var PouchDB = require('pouchdb');

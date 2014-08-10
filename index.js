@@ -2,292 +2,133 @@
 
 'use strict';
 
-var argv = require('optimist').argv;
-if (argv.h || argv.help) {
-  console.log('\nusage:');
-  console.log('-h, --help        : show help');
-  console.log('-p, --port        : port (default 5080)');
-  console.log('-P, --pouch-port  : pouchdb-server port (default 16984)');
-  console.log('-l, --log         : pouchdb-server log level (dev|short|tiny|combined|off)');
-  console.log('-r, --remote      : remote fullfatdb (default https://registry.npmjs.org)');
-  console.log('-R, --remote-skim : remote skimdb (default https://skimdb.npmjs.com/registry)');
-  console.log();
-  return process.exit(0);
-}
-
-var port = argv.p || argv.port || 5080;
-var pouchPort = argv.P || argv['pouch-port'] || 16984;
-
-var FAT_REMOTE = argv.r || argv.remote || 'https://registry.npmjs.org';
-var SKIM_REMOTE = argv.R || argv['remote-skim'] || 'https://skimdb.npmjs.com/registry';
-var FAT_LOCAL = 'http://localhost:' + pouchPort + '/fullfatdb';
-var SKIM_LOCAL = 'http://localhost:' + pouchPort + '/skimdb';
-
-console.log('\nWelcome!');
-console.log('To start using local-npm, just run: ');
-console.log('\n  $ npm set registry http://127.0.0.1:' + port);
-console.log('\nTo switch back, you can run: ');
-console.log('\n  $ npm set registry ' + FAT_REMOTE);
-
-var request = require('request');
-var Promise = require('bluebird');
-var fs = require('fs');
-var atomic = require('./atomic-write');
-var Fullfat = require('npm-fullfat-registry');
-var pouchdbServerLite = require('./pouchdb-server-lite');
-var app = pouchdbServerLite.app;
-var PouchDB = pouchdbServerLite.PouchDB;
-
-var skimRemote = new PouchDB(SKIM_REMOTE);
-var skimPouch = new PouchDB('skimdb');
-var fatPouch = new PouchDB('fullfatdb');
-// I tend to use more than the default 10 listeners
-skimPouch.setMaxListeners(500);
-fatPouch.setMaxListeners(500);
-
-// replicate from central skimdb
-var upToDate;
-var startingTimeout = 1000;
-var backoff = 1.1;
-var sync;
-
-function replicateSkim() {
-  skimRemote.info().then(function (info) {
-    sync = skimPouch.replicate.from(skimRemote, {
-      live: true,
-      batch_size: 1000
-    }).on('change', function (change) {
-      var percent = Math.min(100,
-        (Math.floor(change.last_seq / info.update_seq * 10000) / 100).toFixed(2));
-      console.log('Replicating skimdb, last_seq is: ' + change.last_seq + ' (' + percent + '%)');
-    }).on('uptodate', function () {
-      console.log('local skimdb is up to date');
-      atomic.writeFile('uptodate.txt', '1');
-      upToDate = true;
-    }).on('error', function (err) {
-      console.error('error during replication with skimdb');
+module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
+  FAT_REMOTE = FAT_REMOTE || 'https://registry.npmjs.org';
+  SKIM_REMOTE =  SKIM_REMOTE || 'https://skimdb.npmjs.com/registry';
+  port = port  || 5080;
+  logger =  logger || 'dev';
+  var startingTimeout = 1000;
+  function log(msgs) {
+    if (logger !== 'off') {
+      console.log.apply(console, arguments);
+    }
+  }
+  log('\nWelcome!');
+  log('To start using local-npm, just run: ');
+  log('\n  $ npm set registry http://127.0.0.1:' + port);
+  log('\nTo switch back, you can run: ');
+  log('\n  $ npm set registry ' + FAT_REMOTE);
+  var backoff = 1.1;
+  var request = require('request');
+  var Promise = require('bluebird');
+  var express = require('express');
+  var app = express();
+  var PouchDB = require('./pouchdb-server-lite').PouchDB;
+  var skimRemote = new PouchDB(SKIM_REMOTE);
+  var skimPouch = new PouchDB('skimdb');
+  var base = 'http://localhost:' + port + '/tarballs';
+  var level = require('level');
+  var db = level('./binarydb');
+  var through = require('through2');
+  if (logger !== 'off') {
+    app.use(require('morgan')(logger));
+  }
+  app.use(require('compression')());
+  app.use(require('serve-favicon')(__dirname + '/favicon.ico'));
+  app.get('/:name', function (req, res) {
+    skimPouch.get(req.params.name).then(function (doc) {
+      var docs = changeTarballs(base, doc);
+      res.json(docs);
+    }).catch(function (e) {
+      request.get(FAT_REMOTE + req.url).pipe(res);
+    });
+  });
+  app.get('/:name/:version', function (req, res) {
+    skimPouch.get(req.params.name).then(function (doc) {
+      res.json(changeTarballs(base, doc).versions[req.params.version]);
+    }).catch(function (e) {
+      request.get(FAT_REMOTE + req.url).pipe(res);
+    });
+  });
+  app.get('/tarballs/:name/:version.tgz', function (req, res) {
+    var id = req.params.name + '-' + req.params.version;
+    db.get(id, function (err, resp) {
+      if (!err) {
+        res.set('content-type', 'application/octet-stream');
+        res.set('content-length', resp.length);
+        return res.send(resp);
+      }
+      var buffs = [];
+      var get = request.get(FAT_REMOTE + '/' + req.params.name + '/-/' + id + '.tgz');
+      get.on('error', function () {
+        res.send(500, 'you are offline and this package isn\'t cached');
+        restartReplication();
+      });
+      get.pipe(res);
+      get.pipe(through(function (chunk, _, next) {
+        buffs.push(chunk);
+        next();
+      }, function (next) {
+        next();
+        var buff = Buffer.concat(buffs);
+        db.put(id, buff, function (err){
+          if (err) {
+            log(err);
+          }
+        });
+      }));
+    });
+  });
+  function changeTarballs(base, doc) {
+    Object.keys(doc.versions).forEach(function (key) {
+      doc.versions[key].dist.tarball = base + '/' + doc.name + '/' + key + '.tgz';
+    });
+    return doc;
+  }
+  app.all('/*', function (req, res) {
+    res.send(500);
+  });
+  var sync;
+  function replicateSkim() {
+    skimRemote.info().then(function (info) {
+      sync = skimPouch.replicate.from(skimRemote, {
+        live: true,
+        batch_size: 2000
+      }).on('change', function (change) {
+        var percent = Math.min(100,
+          (Math.floor(change.last_seq / info.update_seq * 10000) / 100).toFixed(2));
+        log('Replicating skimdb, last_seq is: ' + change.last_seq + ' (' + percent + '%)');
+      }).on('uptodate', function () {
+        log('local skimdb is up to date');
+      }).on('error', function (err) {
+        console.error('error during replication with skimdb');
+        console.error(err);
+        restartReplication();
+      });
+    }).catch(function (err) {
+      console.error('error doing info() on ' + SKIM_REMOTE);
       console.error(err);
       restartReplication();
     });
-  }).catch(function (err) {
-    console.error('error doing info() on ' + SKIM_REMOTE);
-    console.error(err);
-    restartReplication();
-  });
-}
-function restartReplication() {
-  // just keep going
-  startingTimeout *= backoff;
-  setTimeout(replicateSkim, Math.round(startingTimeout));
-}
-replicateSkim();
-
-var fullFat;
-
-// start doing exciting shit
-Promise.resolve().then(function () {
-  return Promise.promisify(fs.readFile)('uptodate.txt', {
-    encoding: 'utf8'
-  }).catch(function (err) {
-    return '0'; // default
-  });
-}).then(function (upToDateFile) {
-  upToDate = upToDateFile === '1';
-  if (upToDate) {
-    console.log('local skimdb is up to date');
   }
-}).then(function () {
-  // trick Fullfat into never doing automatic syncing; we don't use it for that
-  return Promise.promisify(atomic.writeFile)('registry.seq', '999999999999');
-}).then(function () {
-  fullFat = new Fullfat({
-    skim: SKIM_LOCAL,
-    fat: FAT_LOCAL,
-    seq_file: 'registry.seq',
-    missing_log: 'missing.log'
-  })
-  .on('start', function () {
-    // we want the changes feed to only be local,
-    // but all other operations should be remote
-    // if we're not done replicating yet
-    process.nextTick(function () {
-      fullFat.skim = upToDate ? SKIM_LOCAL : SKIM_REMOTE;
-    });
-  })
-  .on('error', function (err) {
-    console.error("fullfat hit an error");
-    console.error(err);
-  });
-}).then(function () {
-  // start user-facing proxy server
+  function restartReplication() {
+    // just keep going
+    startingTimeout *= backoff;
+    setTimeout(replicateSkim, Math.round(startingTimeout));
+  }
+  replicateSkim();
 
-  // only execute n fullFat.js operations in parallel
-  var queue = Promise.resolve();
+  app.listen(port);
 
-  function processWithFullFat(docId) {
-    console.log(docId + ': got request...');
-    // recover by fetching with fullFat
-    // wait for changes to let us know it was fetched
-    queue = queue.then(function () {
-      console.log(docId + ': looking up in pouch');
-      return new Promise(function (resolve, reject) {
-        function onError(err) {
-          console.log(docId + ': error storing locally');
-          finish(err);
-        }
-        function onResolve(change) {
-          if (change.id === docId) {
-            console.log(docId + ': stored locally');
-            finish();
-          }
-        }
-        var finished = false;
-        function finish(err) {
-          if (finished) {
-            return;
-          }
-          finished = true;
-          fullFat.removeListener('error', onError);
-          fullFat.removeListener('put', onResolve);
-          fullFat.removeListener('unchanged', onResolve);
-          if (err) {
-            reject(err);
-          } else {
-            resolve();
-          }
-        }
-        console.log(docId + ': fetching in the background');
-        fullFat.on('error', onError);
-        fullFat.on('put', onResolve);
-        fullFat.on('unchanged', onResolve);
-        // this seq is only used by fullFat to determine the file name to write tgz's to
-        fullFat.getDoc({id: docId, seq: Math.round(Math.random() * 1000000)});
+  process.on('SIGINT', function () {
+    // close gracefully
+    sync.cancel();
+    db.close(function () {
+      skimPouch.close().then(function () {
+        process.exit();
+      }, function () {
+        process.exit();
       });
     });
-    return queue;
-  }
-
-  function updateAfterIncomingChange() {
-    // keep a log of what the last seq we checked was
-    var queue = Promise.resolve();
-    fs.readFile('skim-seq.txt', {encoding: 'utf8'}, function (err, data) {
-      var seq = data ? parseInt(data) : 0;
-      console.log('reading skimPouch changes since ' + seq);
-      skimPouch.changes({since: seq, live: true}).on('change', function (change) {
-        queue = queue.then(function () {
-          var seqStr = change.seq.toString();
-          return Promise.promisify(atomic.writeFile)('skim-seq.txt', seqStr);
-        }).then(function () {
-          return fatPouch.allDocs({keys: [change.id]});
-        }).then(function (res) {
-          var first = res.rows[0];
-          if (first && first.value && first.value.rev !== change.changes[0].rev) {
-            console.log('new change came in for ' + change.id + ', updating...');
-            process.nextTick(function () {
-              processWithFullFat(change.id);
-            });
-          }
-        }).catch(function (err) {
-          console.error('unhandled skimPouch allDocs() err');
-          console.error(err);
-        });
-      }).on('error', function (err) {
-        console.error('unhandled skimPouch changes err');
-        console.error(err);
-      });
-    });
-  }
-  if (upToDate) {
-    updateAfterIncomingChange();
-  } else {
-    var alreadyStarted = false;
-    skimPouch.on('uptodate', function () {
-      if (alreadyStarted) {
-        return;
-      }
-      alreadyStarted = true;
-      fullFat.skim = SKIM_LOCAL; // internal API, probably shouldn't do this
-      skimRemote.info().then(function (info) {
-        return Promise.promisify(atomic.writeFile)('skim-seq.txt',
-            info.update_seq.toString()).then(function () {
-          updateAfterIncomingChange();
-        });
-      }).catch(function (err) {
-        console.error('unhandled writeFile err');
-        console.error(err);
-      });
-    });
-  }
-
-
-  var server = require('http').createServer(function (req, res) {
-    var docId;
-    Promise.resolve().then(function () {
-      if (req.method.toLowerCase() === 'get') {
-        // simple doc or attachment request (get)
-        var url = require('url').parse(req.url);
-        docId = decodeURIComponent(url.pathname.split('/')[1]);
-        if (!docId) {
-          return;
-        }
-        console.log(docId + ': simple doc request');
-        // check if it exists first
-        return fatPouch.get(docId).then(function (doc) {
-          if (!Object.keys(doc._attachments).length) {
-            // in some weirdo cases, fullfat puts a doc
-            // with 0 attachments. in these cases, just fetch it again
-            console.log(docId + ': no attachments, need to refresh');
-            var err = new Error('not_found');
-            err.status = 404;
-            throw err;
-          }
-        }).catch(function (err) {
-          if (err.status === 404) {
-            console.log('not found locally: ' + docId);
-            process.nextTick(function () {
-              processWithFullFat(docId); // exec in background
-            });
-          }
-          throw err;
-        });
-      } else {
-        throw new Error('bad_local_request');
-      }
-    }).then(function () {
-      if (docId) {
-        console.log(docId + ': doc exists locally');
-      }
-      request.get('http://127.0.0.1:' + pouchPort + '/fullfatdb' + req.url).pipe(res);
-    }).catch(function (err) {
-      if (err.name === 'bad_local_request') {
-        console.error('got a bad request: ' + req.url);
-        res.status(400).send({error: 'this proxy only accepts GETs'});
-      } else {
-        console.error(docId + ': no local doc, need to proxy to remote');
-        // we got an error, so let's proxy to the remote fat
-        // so we can return immediately
-        request.get(FAT_REMOTE + req.url).pipe(res);
-      }
-    });
   });
-  server.listen(5080, function (err) {
-    if (err) {
-      console.error(err);
-    } else {
-      console.log('Proxy server started at http://127.0.0.1:' + port);
-    }
-  });
-}).catch(function (err) {
-  console.error(err);
-  throw err;
-});
-
-process.on('SIGINT', function () {
-  // close gracefully
-  sync.cancel();
-  Promise.all([fatPouch, skimPouch].map(function (pouch) {
-    return pouch.close();
-  })).then(function () {
-    process.exit(0);
-  });
-});
+};
