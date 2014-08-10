@@ -2,36 +2,36 @@
 
 'use strict';
 
-module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
+var request = require('request');
+var Promise = require('bluebird');
+var express = require('express');
+var level = require('level');
+var through = require('through2');
+var logger = require('./logger');
+
+module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, loglevel) {
   FAT_REMOTE = FAT_REMOTE || 'https://registry.npmjs.org';
   SKIM_REMOTE =  SKIM_REMOTE || 'https://skimdb.npmjs.com/registry';
   port = port  || 5080;
-  logger =  logger || 'dev';
+  loglevel = loglevel || 'dev';
   var startingTimeout = 1000;
-  function log(msgs) {
-    if (logger !== 'off') {
-      console.log.apply(console, arguments);
-    }
-  }
-  log('\nWelcome!');
-  log('To start using local-npm, just run: ');
-  log('\n  $ npm set registry http://127.0.0.1:' + port);
-  log('\nTo switch back, you can run: ');
-  log('\n  $ npm set registry ' + FAT_REMOTE);
+  logger.silly('\nWelcome!');
+  logger.info('To start using local-npm, just run: ');
+  logger.code('\n  $ npm set registry http://127.0.0.1:' + port);
+  logger.info('\nTo switch back, you can run: ');
+  logger.code('\n  $ npm set registry ' + FAT_REMOTE);
+
   var backoff = 1.1;
-  var request = require('request');
-  var Promise = require('bluebird');
-  var express = require('express');
   var app = express();
   var PouchDB = require('./pouchdb-server-lite').PouchDB;
   var skimRemote = new PouchDB(SKIM_REMOTE);
   var skimLocal = new PouchDB('skimdb');
-  var base = 'http://localhost:' + port + '/tarballs';
-  var level = require('level');
   var db = level('./binarydb');
-  var through = require('through2');
-  if (logger !== 'off') {
-    app.use(require('morgan')(logger));
+  var base = 'http://localhost:' + port + '/tarballs';
+
+
+  if (loglevel !== 'off') {
+    app.use(require('morgan')(loglevel));
   }
   app.use(require('compression')());
   app.use(require('serve-favicon')(__dirname + '/favicon.ico'));
@@ -58,10 +58,12 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
     var id = req.params.name + '-' + req.params.version;
     db.get(id, function (err, resp) {
       if (!err) {
+        logger.hit(req.params.name, req.params.version);
         res.set('content-type', 'application/octet-stream');
         res.set('content-length', resp.length);
         return res.send(resp);
       }
+      logger.miss(req.params.name, req.params.version);
       var buffs = [];
       var get = request.get(FAT_REMOTE + '/' + req.params.name + '/-/' + id + '.tgz');
       get.on('error', function () {
@@ -76,8 +78,9 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
         next();
         var buff = Buffer.concat(buffs);
         db.put(id, buff, function (err) {
+          logger.cached(req.params.name, req.params.version);
           if (err) {
-            log(err);
+            logger.info(err);
           }
         });
       }));
@@ -101,17 +104,17 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, logger) {
       }).on('change', function (change) {
         var percent = Math.min(100,
           (Math.floor(change.last_seq / info.update_seq * 10000) / 100).toFixed(2));
-        log('Replicating skimdb, last_seq is: ' + change.last_seq + ' (' + percent + '%)');
+        logger.status(change.last_seq, percent);
       }).on('uptodate', function () {
-        log('local skimdb is up to date');
+        logger.verbose('local skimdb is up to date');
       }).on('error', function (err) {
-        console.error('error during replication with skimdb');
-        console.error(err);
+        logger.error('error during replication with skimdb');
+        logger.error(err);
         restartReplication();
       });
     }).catch(function (err) {
-      console.error('error doing info() on ' + SKIM_REMOTE);
-      console.error(err);
+      logger.error('error doing logger.info() on ' + SKIM_REMOTE);
+      logger.error(err);
       restartReplication();
     });
   }
