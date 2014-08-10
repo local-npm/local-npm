@@ -76,7 +76,12 @@ angular.module('browserNpmApp').controller('MainCtrl',
       opts.skip = 1;
     }
 
-    return remotePouch.allDocs(opts);
+    return remotePouch.allDocs(opts).then(function (res) {
+      res.rows = res.rows.filter(function (row) {
+         return !row.doc.time || !row.doc.time.unpublished;
+        });
+      return res;
+    });
   }
 
   function getDocsViaQuery() {
