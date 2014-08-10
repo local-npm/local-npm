@@ -75,7 +75,7 @@ exports.cached = function (pkg, version) {
     version = String(version);
   }
   log('downloaded '.grey + pkg.green + ' at version '.grey + version.green +
-    'and saved it locally'.grey);
+    ' and saved it locally'.grey);
 };
 exports.offline = function (pkg) {
   if (level > 0) {

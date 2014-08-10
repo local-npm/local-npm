@@ -9,6 +9,7 @@ var level = require('level');
 var through = require('through2');
 var logger = require('./logger');
 var levels = require('./levels');
+var crypto = require('crypto');
 module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, loglevel) {
   FAT_REMOTE = FAT_REMOTE || 'https://registry.npmjs.org';
   SKIM_REMOTE =  SKIM_REMOTE || 'https://skimdb.npmjs.com/registry';
@@ -90,19 +91,35 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, loglevel) {
       get.on('error', function () {
         res.send(500, 'you are offline and this package isn\'t cached');
       });
+
       get.pipe(res);
       get.pipe(through(function (chunk, _, next) {
         buffs.push(chunk);
         next();
       }, function (next) {
         next();
+        var hash = crypto.createHash('sha1');
+
         var buff = Buffer.concat(buffs);
-        db.put(id, buff, function (err) {
-          logger.cached(req.params.name, req.params.version);
-          if (err) {
-            logger.info(err);
+        hash.update(buff);
+        skimLocal.get(req.params.name).catch(function () {
+          return skimRemote.get(req.params.name);
+        }).then(function (doc) {
+          if (doc.versions[req.params.version].dist.shasum !== hash.digest('hex')) {
+            throw new Error('hashes don\'t match');
           }
+          cacheIt();
+        }).catch(function (e) {
+          logger.warn('hashes don\'t match, not caching');
         });
+        function cacheIt() {
+          db.put(id, buff, function (err) {
+            logger.cached(req.params.name, req.params.version);
+            if (err) {
+              logger.info(err);
+            }
+          });
+        }
       }));
     });
   });
