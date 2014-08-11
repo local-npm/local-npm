@@ -25,7 +25,7 @@ exports.silly = function (msg) {
   }
 };
 exports.error = function (msg) {
-    log(msg.red);
+  log(msg.red);
 };
 exports.help = function (msg) {
   log(msg.cyan.inverse);
