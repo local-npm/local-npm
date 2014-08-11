@@ -139,7 +139,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
     skimRemote.info().then(function (info) {
       sync = skimLocal.replicate.from(skimRemote, {
         live: true,
-        batch_size: 2000
+        batch_size: 200
       }).on('change', function (change) {
         var percent = Math.min(100,
           (Math.floor(change.last_seq / info.update_seq * 10000) / 100).toFixed(2));
