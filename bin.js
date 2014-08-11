@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 'use strict';
 var argv = require('yargs').argv;
 var logger = require('./logger');
@@ -5,6 +7,7 @@ if (argv.h || argv.help) {
   logger.help('\nusage:');
   logger.help('-h, --help        : show help');
   logger.help('-p, --port        : port (default 5080)');
+  logger.help('-P, --pouch-port  : pouchdb-server port (default 16984)');
   logger.help('-l, --log         : pouchdb-server log level (error|warn|info|debug)');
   logger.help('-r, --remote      : remote fullfatdb (default https://registry.npmjs.org)');
   logger.help('-R, --remote-skim : remote skimdb (default https://skimdb.npmjs.com/registry)');
