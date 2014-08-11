@@ -77,50 +77,53 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, loglevel) {
     });
   });
   app.get('/tarballs/:name/:version.tgz', function (req, res) {
-    var id = req.params.name + '-' + req.params.version;
-    db.get(id, function (err, resp) {
-      if (!err) {
-        logger.hit(req.params.name, req.params.version);
-        res.set('content-type', 'application/octet-stream');
-        res.set('content-length', resp.length);
-        return res.send(resp);
-      }
-      logger.miss(req.params.name, req.params.version);
-      var buffs = [];
-      var get = request.get(FAT_REMOTE + '/' + req.params.name + '/-/' + id + '.tgz');
-      get.on('error', function () {
-        res.send(500, 'you are offline and this package isn\'t cached');
-      });
-
-      get.pipe(res);
-      get.pipe(through(function (chunk, _, next) {
-        buffs.push(chunk);
-        next();
-      }, function (next) {
-        next();
-        var hash = crypto.createHash('sha1');
-
-        var buff = Buffer.concat(buffs);
-        hash.update(buff);
-        skimLocal.get(req.params.name).catch(function () {
-          return skimRemote.get(req.params.name);
-        }).then(function (doc) {
-          if (doc.versions[req.params.version].dist.shasum !== hash.digest('hex')) {
-            throw new Error('hashes don\'t match');
+    skimLocal.get(req.params.name).catch(function () {
+      return skimRemote.get(req.params.name);
+    }).catch(function (err) {
+      res.send(500, "you are offline and skimdb isn\'t replicated yet");
+      throw new Error('offline');
+    }).then(function (doc) {
+      var id = req.params.name + '-' + req.params.version;
+      var dist = doc.versions[req.params.version].dist;
+      db.get(id, {asBuffer: true, valueEncoding: 'binary'}, function (err, resp) {
+        if (!err) {
+          var hash = crypto.createHash('sha1');
+          hash.update(resp);
+          if (dist.shasum !== hash.digest('hex')) {
+            // happens when we write garbage to disk somehow
+            logger.warn('hashes don\'t match, not returning');
+          } else {
+            logger.hit(req.params.name, req.params.version);
+            res.set('content-type', 'application/octet-stream');
+            res.set('content-length', resp.length);
+            return res.send(resp);
           }
-          cacheIt();
-        }).catch(function (e) {
-          logger.warn('hashes don\'t match, not caching');
+        }
+        logger.miss(req.params.name, req.params.version);
+        var buffs = [];
+
+        var get = request.get(dist.tarball);
+        get.on('error', function (err) {
+          logger.info(err);
+          res.send(500, 'you are offline and this package isn\'t cached');
         });
-        function cacheIt() {
+        get.pipe(res);
+        get.pipe(through(function (chunk, _, next) {
+          buffs.push(chunk);
+          next();
+        }, function (next) {
+          next();
+          var buff = Buffer.concat(buffs);
           db.put(id, buff, function (err) {
             logger.cached(req.params.name, req.params.version);
             if (err) {
               logger.info(err);
             }
           });
-        }
-      }));
+        }));
+      });
+    }).catch(function (err) {
+      logger.info(err);
     });
   });
   function changeTarballs(base, doc) {
