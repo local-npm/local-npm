@@ -90,4 +90,27 @@ The entire "skimdb" (metadata) is replicated locally, but for the "fullfatdb" (m
 
 CouchDB has a changes feed, so `local-npm` just listens to the `skimdb` changes to know when it needs to refresh an outdated module. Changes should replicate within a few seconds of being published.
 
-You can't `npm publish` from the local registry. So be sure to switch back to the main registry before you try to publish!
+You can't `npm publish` from the local registry. So be sure to switch back to the main registry before you try to publish or see below.
+
+Detailed setup
+----
+
+To avoid having to remember urls when switching back and forth to publish you can use `npmrc` like so (based on the instructions for [the australian mirror of npm](http://www.npmjs.org.au/))
+
+```bash
+npm install -g npmrc
+npmrc -c local
+npm set registry http://127.0.0.1:5080
+```
+
+then to publish
+
+```bash
+npmrc default
+```
+
+and to switch back
+
+```bash
+npmrc local
+```
