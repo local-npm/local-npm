@@ -55,6 +55,13 @@ $ local-npm \
    --remote-skim http://<friends_hostname>:16984/skimdb
 ```
 
+While your friend does:
+
+```
+$ local-npm \
+   --url-base http://<friends_hostname>:5080
+```
+
 In this way, you can create a daisy chain of awesome.
 
 **Protip 2**: If you want to set up a single `local-npm` for multiple people to use, such as for conferences or workplaces, then just daemonize it (e.g. using [forever](https://www.npmjs.org/package/forever)), and then when you run it, specify the URL that clients will use to access the server, e.g.:
