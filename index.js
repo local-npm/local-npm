@@ -52,7 +52,12 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
   }
   app.get('/_skimdb', redirectToSkimdb);
   app.get('/_skimdb*', redirectToSkimdb);
-
+  app.get('/', function (req, res) {
+    res.json({
+      'local-npm': 'welcome',
+      version: require('./package.json').version
+    });
+  });
   //
   // actual server logic
   //
