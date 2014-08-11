@@ -58,7 +58,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
       res.json({
         'local-npm': 'welcome',
         version: require('./package.json').version,
-        dbInfo: resp[0],
+        db: resp[0],
         tarballs: resp[1]
       });
     });
