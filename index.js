@@ -53,9 +53,14 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
   app.get('/_skimdb', redirectToSkimdb);
   app.get('/_skimdb*', redirectToSkimdb);
   app.get('/', function (req, res) {
-    res.json({
-      'local-npm': 'welcome',
-      version: require('./package.json').version
+    Promise.all([skimLocal.info(), getCount()]).then(function (resp) {
+
+      res.json({
+        'local-npm': 'welcome',
+        version: require('./package.json').version,
+        dbInfo: resp[0],
+        tarballs: resp[1]
+      });
     });
   });
   //
@@ -166,6 +171,17 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
     // just keep going
     startingTimeout *= backoff;
     setTimeout(replicateSkim, Math.round(startingTimeout));
+  }
+  function getCount() {
+    return new Promise (function (fulfill, reject) {
+      var i = 0;
+      db.createKeyStream()
+      .on('data', function (data) {
+        i++;
+      }).on('end', function () {
+        fulfill(i);
+      }).on('error', reject);
+    });
   }
   replicateSkim();
 
