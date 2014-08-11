@@ -10,10 +10,9 @@ var through = require('through2');
 var logger = require('./logger');
 var levels = require('./levels');
 var crypto = require('crypto');
-module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, loglevel) {
+module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, loglevel) {
   FAT_REMOTE = FAT_REMOTE || 'https://registry.npmjs.org';
   SKIM_REMOTE =  SKIM_REMOTE || 'https://skimdb.npmjs.com/registry';
-  port = port  || 5080;
   loglevel = levels(loglevel);
   var startingTimeout = 1000;
   logger.silly('\nWelcome!');
@@ -29,7 +28,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, loglevel) {
   var skimRemote = new PouchDB(SKIM_REMOTE);
   var skimLocal = new PouchDB('skimdb');
   var db = level('./binarydb');
-  var base = 'http://localhost:' + port + '/tarballs';
+  var base = urlBase + '/tarballs';
 
 
   if (loglevel > 1) {

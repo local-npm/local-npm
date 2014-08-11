@@ -42,6 +42,9 @@ For the command `local-npm`:
 -l, --log         : pouchdb-server log level (error|warn|info|debug)
 -r, --remote      : remote fullfatdb (default https://registry.npmjs.org)
 -R, --remote-skim : remote skimdb (default https://skimdb.npmjs.com/registry)
+-u, --url-base    : base url you want clients to use for fetching tarballs,
+                      e.g. if you are using tunneling/proxying
+                      (default http://127.0.0.1:5080)
 ```
 
 **Protip**: You can replicate from your friend's `local-npm` to your own `local-npm` by simply pointing at it:
@@ -53,6 +56,16 @@ $ local-npm \
 ```
 
 In this way, you can create a daisy chain of awesome.
+
+**Protip 2**: If you want to set up a single `local-npm` for multiple people to use, such as for conferences or workplaces, then just daemonize it (e.g. using [forever](https://www.npmjs.org/package/forever)), and then when you run it, specify the URL that clients will use to access the server, e.g.:
+
+```
+$ local-npm \
+    --url-base http://192.168.x.x:5080
+```
+
+This will ensure that clients fetch tarballs from `192.168.x.x` instead of `127.0.0.1`.
+
 
 Browser UI
 ------
