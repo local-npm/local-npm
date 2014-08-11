@@ -132,7 +132,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
     return doc;
   }
   app.all('/*', function (req, res) {
-    res.send(500);
+    res.redirect(SKIM_REMOTE + req.originalUrl);
   });
   var sync;
   function replicateSkim() {
