@@ -34,7 +34,6 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
   if (loglevel > 1) {
     app.use(require('morgan')('dev'));
   }
-  app.use(require('compression')());
   app.use(require('serve-favicon')(__dirname + '/favicon.ico'));
 
   //
