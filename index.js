@@ -4,6 +4,7 @@
 
 var request = require('request');
 var Promise = require('bluebird');
+Promise.longStackTraces();
 var express = require('express');
 var level = require('level');
 var through = require('through2');
@@ -26,7 +27,9 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
   var app = express();
   var PouchDB = require('./pouchdb-server-lite').PouchDB;
   var skimRemote = new PouchDB(SKIM_REMOTE);
-  var skimLocal = new PouchDB('skimdb');
+  var skimLocal = new PouchDB('skimdb', {
+    auto_compaction: true
+  });
   var db = level('./binarydb');
   var base = urlBase + '/tarballs';
 
@@ -148,6 +151,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
         live: true,
         batch_size: 200
       }).on('change', function (change) {
+        startingTimeout = 1000;
         var percent = Math.min(100,
           (Math.floor(change.last_seq / info.update_seq * 10000) / 100).toFixed(2));
         logger.status(change.last_seq, percent);
@@ -155,12 +159,15 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
         logger.verbose('local skimdb is up to date');
       }).on('error', function (err) {
         logger.warn('error during replication with skimdb');
-        logger.error(err);
+        if (err) {
+          console.log(err);
+          logger.error((new Error('trace').stack));
+        }
         restartReplication();
       });
     }).catch(function (err) {
       logger.warn('error doing logger.info() on ' + SKIM_REMOTE);
-      logger.error(err);
+      logger.error(err.toString());
       restartReplication();
     });
   }

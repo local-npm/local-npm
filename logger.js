@@ -10,6 +10,9 @@ function log(msg) {
 }
 
 exports.info = function (msg) {
+  if (typeof msg !== 'string') {
+    msg = msg.toString();
+  }
   if (level > 1) {
     log(msg.cyan);
   }
