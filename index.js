@@ -28,11 +28,9 @@ module.exports = function (argv) {
   var backoff = 1.1;
   var app = express();
   var PouchDB;
-  if (argv.n) {
-    PouchDB = require('pouchdb');
-  } else {
-    PouchDB = require('./pouchdb-server-lite')(argv).PouchDB;
-  }
+
+  PouchDB = require('./pouchdb-server-lite')(argv).PouchDB;
+
   var skimRemote = new PouchDB(SKIM_REMOTE);
   var skimLocal = new PouchDB('skimdb');
   var db = level('./binarydb');
@@ -48,23 +46,19 @@ module.exports = function (argv) {
   //
   // rudimentary UI based on npm-browser
   //
-  if (!argv.n) {
-    logger.info('\nA simple npm-like UI is available here: http://127.0.0.1:' + port + '/_browse');
-    app.use('/_browse', express.static(__dirname + '/www'));
-    (function () {
-      function redirectToSkimdb(req, res) {
-        var skimUrl = 'http://localhost:' + pouchPort + '/skimdb';
-        var get = request.get(req.originalUrl.replace(/^\/_skimdb/, skimUrl));
-        get.on('error', function (err) {
-          console.error("couldn't proxy to skimdb");
-          console.error(err);
-        });
-        get.pipe(res);
-      }
-      app.get('/_skimdb', redirectToSkimdb);
-      app.get('/_skimdb*', redirectToSkimdb);
-    }());
+  logger.info('\nA simple npm-like UI is available here: http://127.0.0.1:' + port + '/_browse');
+  app.use('/_browse', express.static(__dirname + '/www'));
+  function redirectToSkimdb(req, res) {
+    var skimUrl = 'http://localhost:' + pouchPort + '/skimdb';
+    var get = request.get(req.originalUrl.replace(/^\/_skimdb/, skimUrl));
+    get.on('error', function (err) {
+      console.error("couldn't proxy to skimdb");
+      console.error(err);
+    });
+    get.pipe(res);
   }
+  app.get('/_skimdb', redirectToSkimdb);
+  app.get('/_skimdb*', redirectToSkimdb);
 
   app.get('/', function (req, res) {
     Promise.all([skimLocal.info(), getCount()]).then(function (resp) {
