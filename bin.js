@@ -14,11 +14,7 @@ var yargs = require('yargs')
   .default('R', 'https://skimdb.npmjs.com/registry')
   .alias('R', 'remote-skim')
   .default('u', 'http://127.0.0.1:5080')
-  .alias('u', 'url-base')
-  .boolean('n')
-  .alias('n', 'no-express')
-  .default('n', false)
-  .describe('n', 'flag to not start express-pouchdb');
+  .alias('u', 'url-base');
 
 var argv = yargs.argv;
 
