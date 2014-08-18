@@ -8,32 +8,43 @@ function log(msg) {
   }
   console.log(msg);
 }
-
-exports.info = function (msg) {
-  if (typeof msg !== 'string') {
-    msg = msg.toString();
+function wrap(thing) {
+  if (typeof thing === 'undefined') {
+    return 'undefined';
+  } else if (typeof thing.toString !== 'function') {
+    return String.prototype.toString.call(thing);
+  } else {
+    return thing.toString();
   }
+}
+exports.info = function (msg) {
+  msg = wrap(msg);
   if (level > 1) {
     log(msg.cyan);
   }
 };
 exports.code = function (msg) {
+  msg = wrap(msg);
   if (level > 1) {
     log(msg.white);
   }
 };
 exports.silly = function (msg) {
+  msg = wrap(msg);
   if (level > 1) {
     log(msg.rainbow.bold);
   }
 };
 exports.error = function (msg) {
+  msg = wrap(msg);
   log(msg.red);
 };
 exports.help = function (msg) {
+  msg = wrap(msg);
   log(msg.cyan.inverse);
 };
 exports.verbose = function (msg) {
+  msg = wrap(msg);
   if (level > 2) {
     log(msg.green);
   }
@@ -86,6 +97,7 @@ exports.offline = function (pkg) {
   }
 };
 exports.warn = function (msg) {
+  msg = wrap(msg);
   if (level > 0) {
     log(msg.yellow); 
   }

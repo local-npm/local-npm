@@ -4,7 +4,6 @@
 
 var request = require('request');
 var Promise = require('bluebird');
-Promise.longStackTraces();
 var express = require('express');
 var level = require('level');
 var through = require('through2');
@@ -159,15 +158,12 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
         logger.verbose('local skimdb is up to date');
       }).on('error', function (err) {
         logger.warn('error during replication with skimdb');
-        if (err) {
-          console.log(err);
-          logger.error((new Error('trace').stack));
-        }
+        logger.error(err);
         restartReplication();
       });
     }).catch(function (err) {
       logger.warn('error doing logger.info() on ' + SKIM_REMOTE);
-      logger.error(err.toString());
+      logger.error(err);
       restartReplication();
     });
   }
