@@ -4,6 +4,7 @@
 var yargs = require('yargs')
    .boolean('h')
   .alias('h', 'help')
+  .describe('h', 'this help message')
   .default('p', 5080)
   .alias('p', 'port')
   .describe('p', 'port')
@@ -11,7 +12,7 @@ var yargs = require('yargs')
   .alias('P', 'pouch-port')
   .describe('P', 'pouchdb-server port')
   .alias('l', 'log')
-  .describe('l', 'log level')
+  .describe('l', 'error|warn|info|debug')
   .default('r', 'https://registry.npmjs.org')
   .alias('r', 'remote')
   .describe('r', 'remote fullfatdb')
@@ -20,9 +21,11 @@ var yargs = require('yargs')
   .describe('R', 'remote skimdb')
   .default('u', 'http://127.0.0.1:5080')
   .alias('u', 'url-base')
-  .describe('u', 'base url you want clients to use for fetching tarballs')
+  .describe('u', 'base url it will be hosted on')
   .version(require('./package.json').version, 'v')
-  .alias('v', 'version');
+  .alias('v', 'version')
+  .example('$0 -u http://foo.com -p 3000',
+    'run on port 3000 and visable at foo.com');
 
 var argv = yargs.argv;
 

@@ -28,8 +28,8 @@
     "through2": "^0.6.0",
     "compression": "^1.0.10",
     "level": "^0.18.0",
-    "yargs": "calvinmetcalf/yargs#noCamelCase",
-    "colors": "^0.6.2"
+    "colors": "^0.6.2",
+    "yargs": "nylen/yargs#fix-camelcase-usage"
   },
   "bin": "./bin.js"
 }
