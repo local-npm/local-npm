@@ -28,7 +28,7 @@
     "through2": "^0.6.0",
     "compression": "^1.0.10",
     "level": "^0.18.0",
-    "yargs": "^1.3.1",
+    "yargs": "calvinmetcalf/yargs#noCamelCase",
     "colors": "^0.6.2"
   },
   "bin": "./bin.js"

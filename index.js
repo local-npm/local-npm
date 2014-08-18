@@ -10,9 +10,13 @@ var through = require('through2');
 var logger = require('./logger');
 var levels = require('./levels');
 var crypto = require('crypto');
-module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, loglevel) {
-  FAT_REMOTE = FAT_REMOTE || 'https://registry.npmjs.org';
-  SKIM_REMOTE =  SKIM_REMOTE || 'https://skimdb.npmjs.com/registry';
+module.exports = function (argv) {
+  var FAT_REMOTE = argv.r;
+  var SKIM_REMOTE = argv.R;
+  var port = argv.p;
+  var pouchPort = argv.P;
+  var urlBase = argv.u;
+  var loglevel  = argv.l;
   loglevel = levels(loglevel);
   var startingTimeout = 1000;
   logger.silly('\nWelcome!');
@@ -20,11 +24,13 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
   logger.code('\n  $ npm set registry ' + urlBase);
   logger.info('\nTo switch back, you can run: ');
   logger.code('\n  $ npm set registry ' + FAT_REMOTE);
-  logger.info('\nA simple npm-like UI is available here: http://127.0.0.1:' + port + '/_browse');
 
   var backoff = 1.1;
   var app = express();
-  var PouchDB = require('./pouchdb-server-lite').PouchDB;
+  var PouchDB;
+
+  PouchDB = require('./pouchdb-server-lite')(argv).PouchDB;
+
   var skimRemote = new PouchDB(SKIM_REMOTE);
   var skimLocal = new PouchDB('skimdb', {
     auto_compaction: true
@@ -42,6 +48,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
   //
   // rudimentary UI based on npm-browser
   //
+  logger.info('\nA simple npm-like UI is available here: http://127.0.0.1:' + port + '/_browse');
   app.use('/_browse', express.static(__dirname + '/www'));
   function redirectToSkimdb(req, res) {
     var skimUrl = 'http://localhost:' + pouchPort + '/skimdb';
@@ -54,6 +61,7 @@ module.exports = function (FAT_REMOTE, SKIM_REMOTE, port, pouchPort, urlBase, lo
   }
   app.get('/_skimdb', redirectToSkimdb);
   app.get('/_skimdb*', redirectToSkimdb);
+
   app.get('/', function (req, res) {
     Promise.all([skimLocal.info(), getCount()]).then(function (resp) {
 
