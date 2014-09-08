@@ -145,6 +145,9 @@ module.exports = function (argv) {
       logger.info(err);
     });
   });
+  app.get('/*', function (req, res) {
+    res.redirect(SKIM_REMOTE + req.originalUrl);
+  });
   function changeTarballs(base, doc) {
     Object.keys(doc.versions).forEach(function (key) {
       doc.versions[key].dist.tarball = base + '/' + doc.name + '/' + key + '.tgz';
