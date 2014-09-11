@@ -200,7 +200,10 @@ module.exports = function (argv) {
 
   process.on('SIGINT', function () {
     // close gracefully
-    sync.cancel();
+    if (sync) {
+      sync.cancel();
+    }
+    
     db.close(function () {
       skimLocal.close().then(function () {
         process.exit();
