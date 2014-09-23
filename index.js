@@ -164,11 +164,7 @@ module.exports = function (argv) {
     }).on('error', function (e) {
       res.set(500).send(e);
     });
-    req.on('data', function (d) {
-      nreq.write(d);
-    }).on('end', function () {
-      nreq.end();
-    });
+    req.pipe(nreq);
   });
   function changeTarballs(base, doc) {
     Object.keys(doc.versions).forEach(function (key) {
