@@ -11,6 +11,7 @@ var logger = require('./logger');
 var levels = require('./levels');
 var crypto = require('crypto');
 var https = require('https');
+var http = require('http');
 var url = require('url');
 module.exports = function (argv) {
   var FAT_REMOTE = argv.r;
@@ -26,7 +27,10 @@ module.exports = function (argv) {
   logger.code('\n  $ npm set registry ' + urlBase);
   logger.info('\nTo switch back, you can run: ');
   logger.code('\n  $ npm set registry ' + FAT_REMOTE);
-
+  var fatBase = false;
+  if (FAT_REMOTE !== 'https://registry.npmjs.org') {
+    fatBase = FAT_REMOTE + '/tarballs';
+  }
   var backoff = 1.1;
   var app = express();
   var PouchDB;
@@ -105,6 +109,9 @@ module.exports = function (argv) {
       throw new Error('offline');
     }).then(function (doc) {
       var id = req.params.name + '-' + req.params.version;
+      if (fatBase) {
+        doc = changeTarballs(fatBase, doc);
+      }
       var dist = doc.versions[req.params.version].dist;
       db.get(id, {asBuffer: true, valueEncoding: 'binary'}, function (err, resp) {
         if (!err) {
@@ -122,7 +129,6 @@ module.exports = function (argv) {
         }
         logger.miss(req.params.name, req.params.version);
         var buffs = [];
-
         var get = request.get(dist.tarball);
         get.on('error', function (err) {
           logger.info(err);
@@ -152,12 +158,14 @@ module.exports = function (argv) {
   });
   app.put('/:package', function (req, res) {
     var headers = req.headers;
-    headers.host = 'registry.npmjs.org';
-    var rawUrl = 'https://registry.npmjs.org/' + req.params.package;
+    var hostURL = url.parse(FAT_REMOTE);
+    headers.host = hostURL.host;
+    var rawUrl = FAT_REMOTE  + '/' + req.params.package;
     var opts = url.parse(rawUrl);
     opts.headers = headers;
     opts.method = 'put';
-    var nreq = https.request(opts, function (rs) {
+    var lib = hostURL.protocol === 'https:' ? https : http;
+    var nreq = lib.request(opts, function (rs) {
       rs.on('error', function (e) {
         res.set(500).send(e);
       }).pipe(res);
