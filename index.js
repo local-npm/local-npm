@@ -10,6 +10,8 @@ var through = require('through2');
 var logger = require('./logger');
 var levels = require('./levels');
 var crypto = require('crypto');
+var https = require('https');
+var url = require('url');
 module.exports = function (argv) {
   var FAT_REMOTE = argv.r;
   var SKIM_REMOTE = argv.R;
@@ -148,6 +150,26 @@ module.exports = function (argv) {
   app.get('/*', function (req, res) {
     res.redirect(FAT_REMOTE + req.originalUrl);
   });
+  app.put('/:package', function (req, res) {
+    var headers = req.headers;
+    headers.host = 'registry.npmjs.org';
+    var rawUrl = 'https://registry.npmjs.org/' + req.params.package;
+    var opts = url.parse(rawUrl);
+    opts.headers = headers;
+    opts.method = 'put';
+    var nreq = https.request(opts, function (rs) {
+      rs.on('error', function (e) {
+        res.set(500).send(e);
+      }).pipe(res);
+    }).on('error', function (e) {
+      res.set(500).send(e);
+    });
+    req.on('data', function (d) {
+      nreq.write(d);
+    }).on('end', function () {
+      nreq.end();
+    });
+  });
   function changeTarballs(base, doc) {
     Object.keys(doc.versions).forEach(function (key) {
       doc.versions[key].dist.tarball = base + '/' + doc.name + '/' + key + '.tgz';
@@ -159,7 +181,7 @@ module.exports = function (argv) {
     skimRemote.info().then(function (info) {
       sync = skimLocal.replicate.from(skimRemote, {
         live: true,
-        batch_size: 200
+        batch_size: 100
       }).on('change', function (change) {
         startingTimeout = 1000;
         var percent = Math.min(100,
