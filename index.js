@@ -185,7 +185,7 @@ module.exports = function (argv) {
     skimRemote.info().then(function (info) {
       sync = skimLocal.replicate.from(skimRemote, {
         live: true,
-        batch_size: 100
+        batch_size: 200
       }).on('change', function (change) {
         startingTimeout = 1000;
         var percent = Math.min(100,
