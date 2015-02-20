@@ -22,7 +22,7 @@
     "express": "4.6.1",
     "express-pouchdb": "^0.5.1",
     "morgan": "^1.2.2",
-    "pouchdb": "pouchdb/pouchdb",
+    "pouchdb": "^3.3.1",
     "request": "^2.39.0",
     "serve-favicon": "^2.0.1",
     "through2": "^0.6.0",
