@@ -116,3 +116,5 @@ and to switch back
 ```bash
 npmrc local
 ```
+
+Incidentally, though, `local-npm` [does allow you to publish](https://github.com/nolanlawson/local-npm/pull/33). Your `npm publish`es will just be pushed to the main npm registry.
