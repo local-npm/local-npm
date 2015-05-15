@@ -7,7 +7,7 @@ Sometimes npm is slow. Or sometimes you're at a conference where the wi-fi sucks
 
 When you first install a module, it'll be fetched from the main npm registry. After that, the module and all its dependencies are stored in a local database, so you can expect subsequent installs to be much faster.
 
-`local-npm` will also listen for changes from the remote registry, so you can expect updates to be replicated within seconds of being published.
+`local-npm` will also listen for changes from the remote registry, so you can expect updates to a module's metadata to be replicated within seconds of being published. (I.e. you won't get stuck with old versions.)
 
 If you're organizing a conference/meetup/whatever, you can also share this local server with multiple people.  So if your teammates are constantly installing the same modules over and over again, this can save a lot of time in the long run.
 
