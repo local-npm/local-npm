@@ -13,6 +13,7 @@ var crypto = require('crypto');
 var https = require('https');
 var http = require('http');
 var url = require('url');
+var findVersion = require('./find-version');
 module.exports = function (argv) {
   var FAT_REMOTE = argv.r;
   var SKIM_REMOTE = argv.R;
@@ -96,7 +97,15 @@ module.exports = function (argv) {
     skimLocal.get(req.params.name).catch(function () {
       return skimRemote.get(req.params.name);
     }).then(function (doc) {
-      res.json(changeTarballs(base, doc).versions[req.params.version]);
+      var packageMetadata = changeTarballs(base, doc);
+      var versionMetadata = findVersion(packageMetadata, req.params.version);
+      if (versionMetadata) {
+        res.json(versionMetadata);
+      } else {
+        res.status(404).json({
+          error: 'version not found: ' + req.params.version
+        });
+      }
     }).catch(function (e) {
       request.get(FAT_REMOTE + req.url).pipe(res);
     });

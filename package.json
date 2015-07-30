@@ -18,17 +18,18 @@
   "license": "Apache 2",
   "dependencies": {
     "bluebird": "^2.2.2",
+    "colors": "^0.6.2",
+    "compression": "^1.0.10",
     "corser": "^2.0.0",
     "express": "4.6.1",
     "express-pouchdb": "^0.5.1",
+    "level": "^0.18.0",
     "morgan": "^1.2.2",
     "pouchdb": "^3.3.1",
     "request": "^2.39.0",
+    "semver": "^5.0.1",
     "serve-favicon": "^2.0.1",
     "through2": "^0.6.0",
-    "compression": "^1.0.10",
-    "level": "^0.18.0",
-    "colors": "^0.6.2",
     "yargs": "nylen/yargs#fix-camelcase-usage"
   },
   "bin": "./bin.js"
