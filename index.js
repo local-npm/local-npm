@@ -203,23 +203,31 @@ module.exports = function (argv) {
       }).on('uptodate', function () {
         logger.verbose('local skimdb is up to date');
       }).on('error', function (err) {
-        logger.warn('error during replication with skimdb');
-        logger.error(err);
+        logger.warn(err);
+        logger.warn('Error during replication with ' + SKIM_REMOTE +
+          ', retrying after ' + Math.round(startingTimeout) + ' ms...');
+        // TODO: shouldn't have to explicitly cancel():
+        // https://github.com/pouchdb/pouchdb/issues/3699
+        sync.cancel();
         restartReplication();
       });
     }).catch(function (err) {
-      logger.warn('error doing logger.info() on ' + SKIM_REMOTE);
-      logger.error(err);
+      logger.warn(err);
+      logger.warn('Error fetching info() from ' + SKIM_REMOTE +
+        ', retrying after ' + Math.round(startingTimeout) + ' ms...');
       restartReplication();
     });
   }
   function restartReplication() {
+    // TODO: shouldn't have to re-assign the skimRemote:
+    // https://github.com/pouchdb/pouchdb/issues/4057
+    skimRemote = new PouchDB(SKIM_REMOTE);
     // just keep going
     startingTimeout *= backoff;
     setTimeout(replicateSkim, Math.round(startingTimeout));
   }
   function getCount() {
-    return new Promise (function (fulfill, reject) {
+    return new Promise(function (fulfill, reject) {
       var i = 0;
       db.createKeyStream()
       .on('data', function (data) {
