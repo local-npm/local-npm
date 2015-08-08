@@ -30,7 +30,7 @@
     "semver": "^5.0.1",
     "serve-favicon": "^2.0.1",
     "through2": "^0.6.0",
-    "yargs": "nylen/yargs#fix-camelcase-usage"
+    "yargs": "^3.18.0"
   },
   "bin": "./bin.js"
 }
