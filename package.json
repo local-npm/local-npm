@@ -25,7 +25,7 @@
     "express-pouchdb": "^0.5.1",
     "level": "^0.18.0",
     "morgan": "^1.2.2",
-    "pouchdb": "^3.3.1",
+    "pouchdb": "^4.0.0",
     "request": "^2.39.0",
     "semver": "^5.0.1",
     "serve-favicon": "^2.0.1",
