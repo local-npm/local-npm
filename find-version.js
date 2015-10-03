@@ -10,7 +10,7 @@ module.exports = function findVersion(meta, version) {
     return meta.versions[version];
   }
   var versions = Object.keys(meta.versions).filter(function (otherVersion) {
-    return semver.satisfies(otherVersion, version);
+    return semver.valid(otherVersion) && semver.satisfies(otherVersion, version);
   }).sort(function (a, b) {
     return semver.gt(a, b) ? -1 : 1;
   });

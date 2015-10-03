@@ -2,6 +2,7 @@
 
 'use strict';
 
+var semver = require('semver');
 var request = require('request');
 var Promise = require('bluebird');
 var express = require('express');
@@ -87,7 +88,7 @@ module.exports = function (argv) {
     skimLocal.get(req.params.name).catch(function () {
       return skimRemote.get(req.params.name);
     }).then(function (doc) {
-      var docs = changeTarballs(base, doc);
+      var docs = massageMetadata(base, doc);
       res.json(docs);
     }).catch(function (e) {
       request.get(FAT_REMOTE + req.url).pipe(res);
@@ -97,7 +98,7 @@ module.exports = function (argv) {
     skimLocal.get(req.params.name).catch(function () {
       return skimRemote.get(req.params.name);
     }).then(function (doc) {
-      var packageMetadata = changeTarballs(base, doc);
+      var packageMetadata = massageMetadata(base, doc);
       var versionMetadata = findVersion(packageMetadata, req.params.version);
       if (versionMetadata) {
         res.json(versionMetadata);
@@ -119,7 +120,7 @@ module.exports = function (argv) {
     }).then(function (doc) {
       var id = req.params.name + '-' + req.params.version;
       if (fatBase) {
-        doc = changeTarballs(fatBase, doc);
+        doc = massageMetadata(fatBase, doc);
       }
       var dist = doc.versions[req.params.version].dist;
       db.get(id, {asBuffer: true, valueEncoding: 'binary'}, function (err, resp) {
@@ -183,9 +184,16 @@ module.exports = function (argv) {
     });
     req.pipe(nreq);
   });
-  function changeTarballs(base, doc) {
+  function massageMetadata(base, doc) {
     Object.keys(doc.versions).forEach(function (key) {
-      doc.versions[key].dist.tarball = base + '/' + doc.name + '/' + key + '.tgz';
+      if (!semver.valid(key)) {
+        // apparently some npm modules like handlebars
+        // have invalid semver ranges, and npm deletes them
+        // on-the-fly
+        delete doc.versions[key];
+      } else {
+        doc.versions[key].dist.tarball = base + '/' + doc.name + '/' + key + '.tgz';
+      }
     });
     return doc;
   }
