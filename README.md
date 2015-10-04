@@ -118,3 +118,8 @@ npmrc local
 ```
 
 Incidentally, though, `local-npm` [does allow you to publish](https://github.com/nolanlawson/local-npm/pull/33). Your `npm publish`es will just be pushed to the main npm registry.
+
+Setting up a launch daemon on OS X
+----
+
+If you want `local-npm` to run whenever you log in, instructions are in [this gist](https://gist.github.com/nolanlawson/83ba5862bd719925d9cd).
