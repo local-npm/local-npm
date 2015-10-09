@@ -15,7 +15,7 @@
     "type": "git",
     "url": "https://github.com/nolanlawson/local-npm.git"
   },
-  "license": "Apache",
+  "license": "Apache-2.0",
   "dependencies": {
     "bluebird": "^2.2.2",
     "colors": "^0.6.2",
