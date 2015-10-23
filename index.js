@@ -39,6 +39,7 @@ module.exports = function (argv) {
 
   PouchDB = require('./pouchdb-server-lite')(argv).PouchDB;
 
+  console.log(SKIM_REMOTE);
   var skimRemote = new PouchDB(SKIM_REMOTE);
   var skimLocal = new PouchDB('skimdb', {
     auto_compaction: true
@@ -202,22 +203,17 @@ module.exports = function (argv) {
     skimRemote.info().then(function (info) {
       sync = skimLocal.replicate.from(skimRemote, {
         live: true,
-        batch_size: 200
+        batch_size: 200,
+        retry: true
       }).on('change', function (change) {
         startingTimeout = 1000;
         var percent = Math.min(100,
           (Math.floor(change.last_seq / info.update_seq * 10000) / 100).toFixed(2));
         logger.status(change.last_seq, percent);
-      }).on('uptodate', function () {
-        logger.verbose('local skimdb is up to date');
       }).on('error', function (err) {
+        // shouldn't happen
         logger.warn(err);
-        logger.warn('Error during replication with ' + SKIM_REMOTE +
-          ', retrying after ' + Math.round(startingTimeout) + ' ms...');
-        // TODO: shouldn't have to explicitly cancel():
-        // https://github.com/pouchdb/pouchdb/issues/3699
-        sync.cancel();
-        restartReplication();
+        logger.warn('Error during replication with ' + SKIM_REMOTE);
       });
     }).catch(function (err) {
       logger.warn(err);
@@ -227,9 +223,6 @@ module.exports = function (argv) {
     });
   }
   function restartReplication() {
-    // TODO: shouldn't have to re-assign the skimRemote:
-    // https://github.com/pouchdb/pouchdb/issues/4057
-    skimRemote = new PouchDB(SKIM_REMOTE);
     // just keep going
     startingTimeout *= backoff;
     setTimeout(replicateSkim, Math.round(startingTimeout));
