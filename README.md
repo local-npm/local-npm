@@ -92,7 +92,7 @@ The entire "skimdb" (metadata) is replicated locally, but for the "fullfatdb" (m
 
 CouchDB has a changes feed, so `local-npm` just listens to the `skimdb` changes to know when it needs to refresh an outdated module. Changes should replicate within a few seconds of being published.
 
-You can't `npm publish` from the local registry. So be sure to switch back to the main registry before you try to publish or see below.
+You can't `npm publish` from the local registry while offline, and you also can't publish a "private" module to the local mirror. See notes below about publishing.
 
 Detailed setup
 ----
@@ -117,7 +117,7 @@ and to switch back
 npmrc local
 ```
 
-Incidentally, though, `local-npm` [does allow you to publish](https://github.com/nolanlawson/local-npm/pull/33). Your `npm publish`es will just be pushed to the main npm registry.
+Incidentally, though, `local-npm` [does allow you to publish](https://github.com/nolanlawson/local-npm/pull/33). Your `npm publish`es will just be proxied to the main npm registry.
 
 Setting up a launch daemon on OS X
 ----
