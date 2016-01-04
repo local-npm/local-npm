@@ -33,7 +33,7 @@ The same rules as for the [npm Australia mirror](http://www.npmjs.org.au/) apply
 ### Quick tips
 
 * [Browse your local packages in a browser UI](#browser-ui)
-* [Switch between local and regular npm with npmrc](#swiching-with-npmrc)
+* [Switch between local and regular npm with npmrc](#switching-with-npmrc)
 * [Run `local-npm` as a permanent launch daemon on OS X](#setting-up-a-launch-daemon-on-os-x)
 * [See a speed test of `local-npm` vs regular npm](#speed-test)
 
