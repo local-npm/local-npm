@@ -1,9 +1,7 @@
 local-npm
 ==========
 
-Sometimes npm is slow. Or sometimes you're at a conference where the wi-fi sucks. Or sometimes you live in Australia. These things happen.
-
-`local-npm` is a Node server that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry. Only the modules that you explicitly `npm install` are saved locally. 
+`local-npm` is a Node server that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry. Only the modules that you explicitly `npm install` are saved locally.
 
 When you first install a module, it'll be fetched from the main npm registry. After that, the module and all its dependencies are stored in a local database, so you can expect subsequent installs to be much faster.
 
@@ -31,6 +29,13 @@ To switch back, you can do:
     $ npm set registry https://registry.npmjs.org
 
 The same rules as for the [npm Australia mirror](http://www.npmjs.org.au/) apply here.
+
+### Quick tips
+
+* [Browse your local packages in a browser UI](#browser-ui)
+* [Switch between local and regular npm with npmrc](#swiching-with-npmrc)
+* [Run `local-npm` as a permanent launch daemon on OS X](#setting-up-a-launch-daemon-on-os-x)
+* [See a speed test of `local-npm` vs regular npm](#speed-test)
 
 Command line options
 ----
@@ -92,12 +97,14 @@ The entire "skimdb" (metadata) is replicated locally, but for the "fullfatdb" (m
 
 CouchDB has a changes feed, so `local-npm` just listens to the `skimdb` changes to know when it needs to refresh an outdated module. Changes should replicate within a few seconds of being published.
 
-You can't `npm publish` from the local registry while offline, and you also can't publish a "private" module to the local mirror. See notes below about publishing.
+Note that new tarballs aren't downloaded until you explicitly `npm install` them, though. So e.g. if you install `v1.0.0` of a package, then `v1.0.1` is published, and your range says `^1.0.0`, then the next `npm install` will fail unless you're online and can fetch the new tarball.
 
-Detailed setup
+You also can't `npm publish` from the local registry while offline, and you also can't publish a "private" module to the local mirror. See notes below about publishing.
+
+Switching with npmrc
 ----
 
-To avoid having to remember urls when switching back and forth to publish you can use `npmrc` like so (based on the instructions for [the australian mirror of npm](http://www.npmjs.org.au/))
+Features like `npm search` are currently unsupported. So to avoid having to remember URLs when switching back and forth, you can use `npmrc` like so (based on the instructions for [the Australian mirror of npm](http://www.npmjs.org.au/))
 
 ```bash
 npm install -g npmrc
@@ -105,13 +112,13 @@ npmrc -c local
 npm set registry http://127.0.0.1:5080
 ```
 
-then to publish
+then to search:
 
 ```bash
 npmrc default
 ```
 
-and to switch back
+and to switch back:
 
 ```bash
 npmrc local
@@ -122,4 +129,9 @@ Incidentally, though, `local-npm` [does allow you to publish](https://github.com
 Setting up a launch daemon on OS X
 ----
 
-If you want `local-npm` to run whenever you log in, instructions are in [this gist](https://gist.github.com/nolanlawson/83ba5862bd719925d9cd).
+If you want `local-npm` to run permanently in the background whenever you log in, instructions are in [this gist](https://gist.github.com/nolanlawson/83ba5862bd719925d9cd).
+
+Speed test
+----
+
+For a speed test of `local-npm` versus regular npm, [see these results](https://github.com/nolanlawson/test-local-npm-speed#readme).
