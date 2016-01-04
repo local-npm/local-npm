@@ -88,41 +88,23 @@ A rudimentary npm-like UI that allows you to search modules and see their descri
 
 If you haven't finished replicating the remote skimdb, then not all the modules will be visible yet.
 
-How it works
------
-
-npm is built on top of CouchDB, so `local-npm` works by replicating the full "skimdb" database to a local [PouchDB Server](https://github.com/pouchdb/pouchdb-server). You can inspect the running database at [http://127.0.0.1:16984/_utils](http://127.0.0.1:16984/_utils). (Don't write to it!)
-
-The entire "skimdb" (metadata) is replicated locally, but for the "fullfatdb" (metadata plus tarballs), only what you `npm install` is stored. To start from scratch, just delete whatever directory you started the server in.
-
-CouchDB has a changes feed, so `local-npm` just listens to the `skimdb` changes to know when it needs to refresh an outdated module. Changes should replicate within a few seconds of being published.
-
-Note that new tarballs aren't downloaded until you explicitly `npm install` them, though. So e.g. if you install `v1.0.0` of a package, then `v1.0.1` is published, and your range says `^1.0.0`, then the next `npm install` will fail unless you're online and can fetch the new tarball.
-
-You also can't `npm publish` from the local registry while offline, and you also can't publish a "private" module to the local mirror. See notes below about publishing.
-
 Switching with npmrc
 ----
 
-Features like `npm search` are currently unsupported. So to avoid having to remember URLs when switching back and forth, you can use `npmrc` like so (based on the instructions for [the Australian mirror of npm](http://www.npmjs.org.au/))
+Features like `npm search` are currently unsupported. So to avoid having to remember URLs when switching back and forth, you can use `npmrc` like so (based on the instructions for [the Australian mirror of npm](http://www.npmjs.org.au/)):
 
-```bash
-npm install -g npmrc
-npmrc -c local
-npm set registry http://127.0.0.1:5080
-```
+
+    $ npm install -g npmrc
+    $ npmrc -c local
+    $ npm set registry http://127.0.0.1:5080
 
 then to search:
 
-```bash
-npmrc default
-```
+    $ npmrc default
 
 and to switch back:
 
-```bash
-npmrc local
-```
+    $ npmrc local
 
 Incidentally, though, `local-npm` [does allow you to publish](https://github.com/nolanlawson/local-npm/pull/33). Your `npm publish`es will just be proxied to the main npm registry.
 
@@ -135,3 +117,14 @@ Speed test
 ----
 
 For a speed test of `local-npm` versus regular npm, [see these results](https://github.com/nolanlawson/test-local-npm-speed#readme).
+
+How it works
+-----
+
+npm is built on top of CouchDB, so `local-npm` works by replicating the full "skimdb" database to a local [PouchDB Server](https://github.com/pouchdb/pouchdb-server). You can inspect the running database at [http://127.0.0.1:16984/_utils](http://127.0.0.1:16984/_utils). (Don't write to it!)
+
+The entire "skimdb" (metadata) is replicated locally, but for the "fullfatdb" (metadata plus tarballs), only what you `npm install` is stored. To start from scratch, just delete whatever directory you started the server in.
+
+CouchDB has a changes feed, so `local-npm` just listens to the `skimdb` changes to know when it needs to refresh an outdated module. Changes should replicate within a few seconds of being published. (You can watch this happen in realtime by reading the logs, which is kind of fun! An update comes in whenever someone publishes a module.)
+
+Note that new tarballs aren't downloaded until you explicitly `npm install` them, though. So e.g. if you install `v1.0.0` of a package, then `v1.0.1` is published, and your range says `^1.0.0`, then the next `npm install` will fail unless you're online and can fetch the new tarball.
