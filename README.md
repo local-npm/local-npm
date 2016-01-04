@@ -9,6 +9,8 @@ When you first install a module, it'll be fetched from the main npm registry. Af
 
 If you're organizing a conference/meetup/whatever, you can also share this local server with multiple people.  So if your teammates are constantly installing the same modules over and over again, this can save a lot of time in the long run.
 
+`local-npm` is also a good way to make `npm install` work offline. Assuming new versions of a package haven't been published since you last installed, subsequent `npm install`s will all serve from the cache, without ever hitting a remote server.
+
 Usage
 ------
 
