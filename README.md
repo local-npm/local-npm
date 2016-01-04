@@ -47,6 +47,7 @@ For the command `local-npm`:
 -u, --url-base    : base url you want clients to use for fetching tarballs,
                       e.g. if you are using tunneling/proxying
                       (default http://127.0.0.1:5080)
+--prefix          : path prefix for all db stores (default: "./")
 ```
 
 **Protip**: You can replicate from your friend's `local-npm` to your own `local-npm` by simply pointing at it:

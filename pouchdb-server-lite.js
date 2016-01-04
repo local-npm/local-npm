@@ -8,6 +8,7 @@ var favicon = require('serve-favicon');
 var logger = require('./logger');
 module.exports = function (argv) {
   var port    = argv.P;
+  var prefix  = argv.prefix;
   var loglevel  = require('./levels')(argv.l);
   var app     = express();
 
@@ -24,7 +25,7 @@ module.exports = function (argv) {
   }));
 
   var expressPouchDB = require('express-pouchdb');
-  var PouchDB = require('pouchdb');
+  var PouchDB = require('pouchdb').defaults({prefix: prefix});
   app.use(expressPouchDB(PouchDB));
   app.listen(port, function () {
     logger.info('\nPouchDB Server listening on port ' + port + '.');
