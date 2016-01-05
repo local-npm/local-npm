@@ -2,6 +2,7 @@
 
 'use strict';
 
+var path = require('path');
 var semver = require('semver');
 var request = require('request');
 var Promise = require('bluebird');
@@ -22,6 +23,7 @@ module.exports = function (argv) {
   var pouchPort = argv.P;
   var urlBase = argv.u;
   var loglevel  = argv.l;
+  var prefix = argv.prefix;
   loglevel = levels(loglevel);
   var startingTimeout = 1000;
   logger.silly('\nWelcome!');
@@ -44,7 +46,7 @@ module.exports = function (argv) {
   var skimLocal = new PouchDB('skimdb', {
     auto_compaction: true
   });
-  var db = level('./binarydb');
+  var db = level(path.resolve(prefix, 'binarydb'));
   var base = urlBase + '/tarballs';
 
 

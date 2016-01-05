@@ -22,6 +22,8 @@ var yargs = require('yargs')
   .default('u', 'http://127.0.0.1:5080')
   .alias('u', 'url-base')
   .describe('u', 'base url it will be hosted on')
+  .default('prefix', './')
+  .describe('prefix', 'path prefix for all db stores')
   .version(require('./package.json').version, 'v')
   .alias('v', 'version')
   .example('$0 -u http://foo.com -p 3000',
