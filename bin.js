@@ -40,7 +40,7 @@ if (etc === 'set') {
       console.log('npm remote set to local-npm!');
     }
   });
-  return process.exit(0);
+  return;
 } else if (etc === 'unset'){
   exec('npm set registry https://registry.npmjs.org', function (err) {
     if (err) {
@@ -49,7 +49,7 @@ if (etc === 'set') {
       console.log('npm remote set to https://registry.npmjs.org');
     }
   });
-  return process.exit(0);
+  return;
 }
 
 if (argv.h) {
