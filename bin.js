@@ -27,7 +27,30 @@ var yargs = require('yargs')
   .example('$0 -u http://foo.com -p 3000',
     'run on port 3000 and visable at foo.com');
 
+var exec = require('child_process').exec;
 var argv = yargs.argv;
+
+var etc = argv._.length && argv._[0];
+
+if (etc === 'set') {
+  exec('npm set registry http://127.0.0.1:5080', function (err) {
+    if (err) {
+      console.error('Can\'t set local registery: ', err);
+    } else {
+      console.log('npm remote set to local-npm!');
+    }
+  });
+  return process.exit(0);
+} else if (etc === 'unset'){
+  exec('npm set registry https://registry.npmjs.org', function (err) {
+    if (err) {
+      console.error('Can\'t set remote registery: ', err);
+    } else {
+      console.log('npm remote set to https://registry.npmjs.org');
+    }
+  });
+  return process.exit(0);
+}
 
 if (argv.h) {
   yargs.showHelp();

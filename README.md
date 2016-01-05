@@ -22,11 +22,11 @@ to start the server. (Note that it will write files in whatever directory you ru
 
 Then set `npm` to point to the local server:
 
-    $ npm set registry http://127.0.0.1:5080
+    $ local-npm set
 
 To switch back, you can do:
 
-    $ npm set registry https://registry.npmjs.org
+    $ local-npm unset
 
 The same rules as for the [npm Australia mirror](http://www.npmjs.org.au/) apply here.
 
