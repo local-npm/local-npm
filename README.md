@@ -46,16 +46,16 @@ For the command `local-npm`:
 
 ```
 -h, --help        : show help
--p, --port        : port (default 5080)
--P, --pouch-port  : pouchdb-server port (default 16984)
+-p, --port        : port (default: 5080)
+-P, --pouch-port  : pouchdb-server port (default: 16984)
 -l, --log         : pouchdb-server log level (error|warn|info|debug)
--r, --remote      : remote fullfatdb (default https://registry.npmjs.org)
--R, --remote-skim : remote skimdb (default https://skimdb.npmjs.com/registry)
+-r, --remote      : remote fullfatdb (default: https://registry.npmjs.org)
+-R, --remote-skim : remote skimdb (default: https://skimdb.npmjs.com/registry)
 -u, --url-base    : base url you want clients to use for fetching tarballs,
                       e.g. if you are using tunneling/proxying
-                      (default http://127.0.0.1:5080)
--v, --version     : show version number                               [boolean]
--d, --directory   : directory to store data                     [default: "./"]
+                      (default: http://127.0.0.1:5080)
+-v, --version     : show version number
+-d, --directory   : directory to store data (default: "./")
 ```
 
 **Protip**: You can replicate from your friend's `local-npm` to your own `local-npm` by simply pointing at it:
