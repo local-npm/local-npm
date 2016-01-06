@@ -15,6 +15,7 @@ var crypto = require('crypto');
 var https = require('https');
 var http = require('http');
 var url = require('url');
+var mkdirp = require('mkdirp');
 var findVersion = require('./find-version');
 module.exports = function (argv) {
   var FAT_REMOTE = argv.r;
@@ -23,7 +24,8 @@ module.exports = function (argv) {
   var pouchPort = argv.P;
   var urlBase = argv.u;
   var loglevel  = argv.l;
-  var prefix = argv.prefix;
+  var directory = path.resolve(argv.d);
+  mkdirp.sync(directory);
   loglevel = levels(loglevel);
   var startingTimeout = 1000;
   logger.silly('\nWelcome!');
@@ -46,7 +48,7 @@ module.exports = function (argv) {
   var skimLocal = new PouchDB('skimdb', {
     auto_compaction: true
   });
-  var db = level(path.resolve(prefix, 'binarydb'));
+  var db = level(path.resolve(directory, 'binarydb'));
   var base = urlBase + '/tarballs';
 
 
