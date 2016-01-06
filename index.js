@@ -23,6 +23,7 @@ module.exports = function (argv) {
   var port = argv.p;
   var pouchPort = argv.P;
   var urlBase = argv.u;
+  urlBase = urlBase.replace(/:5080$/, ':' + port); // port is configurable
   var loglevel  = argv.l;
   var directory = path.resolve(argv.d);
   mkdirp.sync(directory);
