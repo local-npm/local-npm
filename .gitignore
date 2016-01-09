@@ -9,3 +9,6 @@ missing.log
 skim-seq.txt
 .idea
 binarydb
+coverage
+npm-debug.log*
+install_dir

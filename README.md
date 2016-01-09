@@ -1,4 +1,4 @@
-local-npm
+Glocal-npm
 ==========
 
 `local-npm` is a Node server that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry. Only the modules that you explicitly `npm install` are saved locally.
@@ -136,7 +136,17 @@ Note that new tarballs aren't downloaded until you explicitly `npm install` them
 Testing
 ---
 
+to run the linter:
+
+    npm run lint
+
+To run the tests:
+
     ./test.sh
     
-(Note: do not try to do `npm test`. You have to run the bash script
-due to how we play around with the `.npmrc` file during testing.
+_Note: do not try to do `npm test`. You have to run the bash script
+due to how we play around with the `.npmrc` file during testing._
+
+To check code coverage:
+
+    COVERAGE=1 ./test.sh
