@@ -52,6 +52,11 @@ describe('main test suite', function () {
     for (var i = 0; i < 5; i++) {
       if (i === 2) {
         await exec('npm cache clear', {cwd: WORK_DIR});
+      } else if (i == 3) {
+        await rimraf(path.resolve(WORK_DIR, 'node_modules'));
+      } else if (i == 4) {
+        await rimraf(path.resolve(WORK_DIR, 'node_modules'));
+        await exec('npm cache clear', {cwd: WORK_DIR});
       }
       await exec('npm install', {cwd: WORK_DIR});
 

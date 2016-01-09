@@ -28,8 +28,9 @@ wait $PID
 ./node_modules/.bin/rimraf install_dir
 
 if [[ $COVERAGE == 1 ]]; then
+  sleep 3 # wait for coverage files to be written
   echo "Checking coverage..."
-  ./node_modules/.bin/istanbul check-coverage --lines 70 --function 50 --statements 70 --branches 35
+  ./node_modules/.bin/istanbul check-coverage --lines 70 --function 55 --statements 70 --branches 40
   COVERAGE_STATUS=$?
   if [[ $COVERAGE_STATUS != 0 ]]; then
     exit $COVERAGE_STATUS
