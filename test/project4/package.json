@@ -1,0 +1,6 @@
+{
+  "name": "test3",
+  "dependencies": {
+    "leveldown": "1.4.0"
+  }
+}

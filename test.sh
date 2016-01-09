@@ -29,7 +29,7 @@ wait $PID
 
 if [[ $COVERAGE == 1 ]]; then
   echo "Checking coverage..."
-  ./node_modules/.bin/istanbul check-coverage --lines 100 --function 100 --statements 100 --branches 100
+  ./node_modules/.bin/istanbul check-coverage --lines 70 --function 50 --statements 70 --branches 35
   COVERAGE_STATUS=$?
   if [[ $COVERAGE_STATUS != 0 ]]; then
     exit $COVERAGE_STATUS
@@ -38,4 +38,8 @@ fi
 
 if [[ $MAIN_STATUS != 0 ]]; then
   exit $MAIN_STATUS
+fi
+
+if [[ $REPORT_COVERAGE == 1 ]]; then
+  ./node_modules/.bin/istanbul-coveralls --no-rm
 fi

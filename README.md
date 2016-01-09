@@ -1,4 +1,4 @@
-Glocal-npm
+local-npm [![Build Status](https://travis-ci.org/nolanlawson/local-npm.svg)](https://travis-ci.org/nolanlawson/local-npm) [![Coverage Status](https://coveralls.io/repos/nolanlawson/local-npm/badge.svg?branch=master&service=github)](https://coveralls.io/github/nolanlawson/local-npm?branch=master)
 ==========
 
 `local-npm` is a Node server that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry. Only the modules that you explicitly `npm install` are saved locally.

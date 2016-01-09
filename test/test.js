@@ -22,7 +22,7 @@ var WORK_DIR = 'work_dir';
 
 describe('main test suite', function () {
 
-  this.timeout(30000);
+  this.timeout(90000);
 
   beforeEach(async () => {
     await rimraf(WORK_DIR);
@@ -134,17 +134,39 @@ describe('main test suite', function () {
     res.should.match(/pouchdb/);
   });
 
+  it.skip('does a package with a postinstall step', async () => {
+    await ncp('./test/project4', WORK_DIR);
+
+    await exec('npm install', {cwd: WORK_DIR});
+
+    var stat = await statAsync(
+      path.resolve(WORK_DIR, 'node_modules', 'leveldown'));
+    stat.isDirectory().should.equal(true, 'leveldown dir should exist');
+  });
+
   it('installs packages from local cache', async () => {
 
     // fetch packages from local cache using pouchdb
     var db = new PouchDB('http://127.0.0.1:3030/_skimdb');
-    var docs = await db.changes({limit: 10});
 
-    // there's a weird old package called "Babel" that doesn't
-    // npm install correctly
-    var packages = docs.results
+    // wait until we've replicated at least 10 docs
+    while (true) {
+      var numPackages = (await db.changes({limit: 10})).results.length;
+      if (numPackages === 10) {
+        break;
+      }
+    }
+
+
+    // there are some weird old packages that don't npm install
+    // correctly. go figure
+    var blacklist = [
+      'ClearSilver', 'Babel', 'asyncevents', 'OnCollect',
+      'RemoteTestService'];
+
+    var packages = (await db.changes({limit: 10})).results
       .map(row => row.id)
-      .filter(id => ['Babel'].indexOf(id) == -1);
+      .filter(id => blacklist.indexOf(id) == -1);
 
     await ncp('./test/project3', WORK_DIR);
 
