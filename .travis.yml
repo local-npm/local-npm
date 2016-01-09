@@ -2,7 +2,7 @@ language: node_js
 
 node_js:
   - "stable"
-script: test.sh
+script: bash ./test.sh
 sudo: false
 before_script:
   - "export DISPLAY=:99.0"
