@@ -132,3 +132,11 @@ The entire "skimdb" (metadata) is replicated locally, but for the "fullfatdb" (m
 CouchDB has a changes feed, so `local-npm` just listens to the `skimdb` changes to know when it needs to refresh an outdated module. Changes should replicate within a few seconds of being published. (You can watch this happen in realtime by reading the logs, which is kind of fun! An update comes in whenever someone publishes a module.)
 
 Note that new tarballs aren't downloaded until you explicitly `npm install` them, though. So e.g. if you install `v1.0.0` of a package, then `v1.0.1` is published, and your range says `^1.0.0`, then the next `npm install` will fail unless you're online and can fetch the new tarball.
+
+Testing
+---
+
+    ./test.sh
+    
+(Note: do not try to do `npm test`. You have to run the bash script
+due to how we play around with the `.npmrc` file during testing.

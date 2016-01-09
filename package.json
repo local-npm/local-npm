@@ -2,9 +2,14 @@
   "name": "local-npm",
   "version": "1.5.0",
   "description": "npm, on your local disk",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "bin": "lib/bin.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "run-scripts lint main-test test-cleanup",
+    "lint": "eslint test/*",
+    "write-npmrc": "echo registry=http://127.0.0.1:3030/ > .npmrc",
+    "main-test": "babel-node node_modules/.bin/_mocha test/test.js",
+    "test-cleanup": "rm -f .npmrc",
     "start": "node ./bin.js"
   },
   "author": {
@@ -33,5 +38,19 @@
     "through2": "^2.0.0",
     "yargs": "^3.18.0"
   },
-  "bin": "./bin.js"
+  "devDependencies": {
+    "babel-cli": "^6.4.0",
+    "babel-plugin-syntax-async-functions": "^6.3.13",
+    "babel-plugin-transform-regenerator": "^6.3.26",
+    "babel-preset-es2015": "^6.3.13",
+    "chai": "^3.4.1",
+    "child-process-promise": "^1.1.0",
+    "denodeify": "^1.2.1",
+    "eslint": "^1.10.3",
+    "mkdirp": "^0.5.1",
+    "mocha": "^2.3.4",
+    "ncp": "^2.0.0",
+    "rimraf": "^2.5.0",
+    "run-scripts": "^0.4.0"
+  }
 }
