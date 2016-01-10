@@ -150,3 +150,9 @@ due to how we play around with the `.npmrc` file during testing._
 To check code coverage:
 
     COVERAGE=1 ./test.sh
+
+There are also various other tests:
+
+    DAISY_CHAIN=1 ./test.sh
+    OFFLINE=1 ./test.sh
+    HELP=1 ./test.sh

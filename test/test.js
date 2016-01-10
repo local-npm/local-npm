@@ -22,7 +22,7 @@ var WORK_DIR = 'work_dir';
 
 describe('main test suite', function () {
 
-  this.timeout(90000);
+  this.timeout(120000);
 
   beforeEach(async () => {
     await rimraf(WORK_DIR);
