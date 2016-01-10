@@ -9,11 +9,14 @@ npm run write-npmrc
 echo "Starting local-npm..."
 if [[ $COVERAGE == 1 ]]; then
   ./node_modules/.bin/rimraf coverage
-  ./node_modules/.bin/istanbul cover ./lib/bin.js -- --directory install_dir --port 3030 --pouch-port 3040 &
+  ./node_modules/.bin/istanbul cover ./test/test-bin.js -- --directory install_dir --port 3030 --pouch-port 3040 &
 else
-  ./lib/bin.js --directory install_dir --port 3030 --pouch-port 3040 &
+  ./test/test-bin.js --directory install_dir --port 3030 --pouch-port 3040 &
 fi
 PID=$!
+
+# the test-bin.js waits 5 seconds to stop mocking an offline state
+sleep 10
 
 npm run run-test
 MAIN_STATUS=$?
