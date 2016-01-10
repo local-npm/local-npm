@@ -176,7 +176,8 @@ describe('main test suite', function () {
 
   it('fetches a package that exists', async () => {
     var res = await fetch('http://127.0.0.1:3030/blob-util');
-    var json = res.json();
+    res.status.should.equal(200);
+    var json = await res.json();
     json.name.should.equal('blob-util');
   });
 
@@ -187,7 +188,8 @@ describe('main test suite', function () {
 
   it('fetches a package version that exists', async () => {
     var res = await fetch('http://127.0.0.1:3030/blob-util/1.0.0');
-    var json = res.json();
+    res.status.should.equal(200);
+    var json = await res.json();
     json.name.should.equal('blob-util');
   });
 
