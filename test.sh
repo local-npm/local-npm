@@ -9,9 +9,11 @@ npm run write-npmrc
 echo "Starting local-npm..."
 if [[ $COVERAGE == 1 ]]; then
   ./node_modules/.bin/rimraf coverage
-  ./node_modules/.bin/istanbul cover ./test/test-bin.js -- --directory install_dir --port 3030 --pouch-port 3040 &
+  ./node_modules/.bin/istanbul cover ./test/test-bin.js -- \
+    --directory install_dir --port 3030 --pouch-port 3040 --log debug &
 else
-  ./test/test-bin.js --directory install_dir --port 3030 --pouch-port 3040 &
+  ./test/test-bin.js --directory install_dir --port 3030 \
+    --pouch-port 3040 --log debug &
 fi
 PID=$!
 
@@ -33,7 +35,8 @@ wait $PID
 if [[ $COVERAGE == 1 ]]; then
   sleep 3 # wait for coverage files to be written
   echo "Checking coverage..."
-  ./node_modules/.bin/istanbul check-coverage --lines 70 --function 55 --statements 70 --branches 40
+  ./node_modules/.bin/istanbul check-coverage --lines 70 --function 55 \
+    --statements 70 --branches 40
   COVERAGE_STATUS=$?
   if [[ $COVERAGE_STATUS != 0 ]]; then
     exit $COVERAGE_STATUS
