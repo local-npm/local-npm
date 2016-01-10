@@ -211,6 +211,18 @@ describe('main test suite', function () {
     res.status.should.equal(500);
   });
 
+  it('does not allows us to publish an existing package', async () => {
+    await ncp('./test/project5', WORK_DIR);
+
+    try {
+      await exec('npm publish', {cwd: WORK_DIR}); // try to publish lodash :)
+      throw new Error('expected an error when npm publishing');
+    } catch (e) {
+      should.exist(e);
+      e.stderr.should.match(/permission/); // 'You do not have permission'
+    }
+  });
+
   it('installs packages from local cache', async () => {
 
     // fetch packages from local cache using pouchdb
