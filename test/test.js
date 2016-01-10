@@ -14,8 +14,9 @@ var path = require('path');
 var fetch = require('node-fetch');
 var PouchDB = require('pouchdb');
 var memdown = require('memdown');
-var pkg = require('../package.json');
+var semver = require('semver');
 var should = require('chai').should();
+var pkg = require('../package.json');
 
 var WORK_DIR = 'work_dir';
 
@@ -191,6 +192,15 @@ describe('main test suite', function () {
     res.status.should.equal(200);
     var json = await res.json();
     json.name.should.equal('blob-util');
+  });
+
+  it('fetches a package version with a range', async () => {
+    var res = await fetch('http://127.0.0.1:3030/lodash/3.x');
+    res.status.should.equal(200);
+    var json = await res.json();
+    json.name.should.equal('lodash');
+    should.equal(semver.satisfies(json.version, '3.x'), true,
+      'fetched version satisfies 3.x');
   });
 
   it('fetches a package version that does not exist', async () => {
