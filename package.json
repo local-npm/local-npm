@@ -1,6 +1,6 @@
 {
   "name": "local-npm",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "npm, on your local disk",
   "main": "lib/index.js",
   "bin": "lib/bin.js",
