@@ -219,7 +219,6 @@ describe('main test suite', function () {
       throw new Error('expected an error when npm publishing');
     } catch (e) {
       should.exist(e);
-      e.stderr.should.match(/permission/); // 'You do not have permission'
     }
   });
 
