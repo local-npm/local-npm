@@ -15,8 +15,7 @@ var fetch = require('node-fetch');
 var PouchDB = require('pouchdb');
 var memdown = require('memdown');
 var pkg = require('../package.json');
-
-require('chai').should();
+var should = require('chai').should();
 
 var WORK_DIR = 'work_dir';
 
@@ -147,6 +146,67 @@ describe('main test suite', function () {
     var stat = await statAsync(
       path.resolve(WORK_DIR, 'node_modules', 'leveldown'));
     stat.isDirectory().should.equal(true, 'leveldown dir should exist');
+  });
+
+  it('installs a pkg version that exists', async () => {
+    await ncp('./test/project3', WORK_DIR);
+    await exec('npm install blob-util@1.0.0', {cwd: WORK_DIR});
+    var stat = await statAsync(
+      path.resolve(WORK_DIR, 'node_modules', 'blob-util'));
+    stat.isDirectory().should.equal(true,
+      `package blob-util should exist`);
+  });
+
+  it('doesn\'t install a pkg version that doesn\'t exist', async () => {
+    await ncp('./test/project3', WORK_DIR);
+    try {
+      await exec('npm install blob-util@0.0.1', {cwd: WORK_DIR});
+      throw new Error('expected an error doing npm install');
+    } catch (e) {
+      should.exist(e);
+    }
+    try {
+      await statAsync(
+        path.resolve(WORK_DIR, 'node_modules', 'blob-util'));
+      throw new Error('expected an error doing fs.stat');
+    } catch (e) {
+      should.exist(e);
+    }
+  });
+
+  it('fetches a package that exists', async () => {
+    var res = await fetch('http://127.0.0.1:3030/blob-util');
+    var json = res.json();
+    json.name.should.equal('blob-util');
+  });
+
+  it('fetches a package that does not exist', async () => {
+    var res = await fetch('http://127.0.0.1:3030/fsdljfsd458fzzljsdfjklzzx');
+    res.status.should.equal(404);
+  });
+
+  it('fetches a package version that exists', async () => {
+    var res = await fetch('http://127.0.0.1:3030/blob-util/1.0.0');
+    var json = res.json();
+    json.name.should.equal('blob-util');
+  });
+
+  it('fetches a package version that does not exist', async () => {
+    var res = await fetch('http://127.0.0.1:3030/blob-util/0.0.1');
+    res.status.should.equal(404);
+  });
+
+  it('fetches a package that does not exist, with version', async () => {
+    var res = await fetch(
+      'http://127.0.0.1:3030/fdsljfds2332jl329dsfkxxz67z9/0.0.1');
+    res.status.should.equal(404);
+  });
+
+  it('fetches a tarball that does not exist, with version', async () => {
+    var res = await fetch(
+      'http://127.0.0.1:3030/tarballs/fds2089dfsljkljl329dsfkxxzz9/0.0.1.tgz');
+    // this is a fudge for an "offline" error
+    res.status.should.equal(500);
   });
 
   it('installs packages from local cache', async () => {
