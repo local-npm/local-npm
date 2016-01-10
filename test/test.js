@@ -81,6 +81,10 @@ describe('main test suite', function () {
     }
   });
 
+  it('can do npm search', async () => {
+    await exec('npm search pouchdb');
+  });
+
   it('has a www/ page', async () => {
     var res = await fetch('http://127.0.0.1:3030/_browse');
     res.status.should.equal(200);
@@ -256,7 +260,6 @@ describe('main test suite', function () {
         break;
       }
     }
-
 
     // there are some weird old packages that don't npm install
     // correctly. go figure
