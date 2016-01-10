@@ -158,6 +158,17 @@ describe('main test suite', function () {
       `package blob-util should exist`);
   });
 
+  it('installs a pkg with a weird version', async () => {
+    await ncp('./test/project3', WORK_DIR);
+    var pkg = 'esprima-fb';
+    var version = '3001.1.0-dev-harmony-fb';
+    await exec(`npm install ${pkg}@${version}`, {cwd: WORK_DIR});
+    var stat = await statAsync(
+      path.resolve(WORK_DIR, 'node_modules', 'esprima-fb'));
+    stat.isDirectory().should.equal(true,
+      `package esprima-fb should exist`);
+  });
+
   it('doesn\'t install a pkg version that doesn\'t exist', async () => {
     await ncp('./test/project3', WORK_DIR);
     try {
@@ -215,8 +226,9 @@ describe('main test suite', function () {
   });
 
   it('fetches a tarball that does not exist, with version', async () => {
+    var pkg = 'fds2089dfsljkljl329dsfkxxzz9';
     var res = await fetch(
-      'http://127.0.0.1:3030/tarballs/fds2089dfsljkljl329dsfkxxzz9/0.0.1.tgz');
+      `http://127.0.0.1:3030/tarballs/${pkg}/0.0.1.tgz`);
     // this is a fudge for an "offline" error
     res.status.should.equal(500);
   });
