@@ -11,7 +11,7 @@
     "write-npmrc": "echo registry=http://127.0.0.1:3030/ > .npmrc",
     "main-test": "babel-node node_modules/.bin/_mocha --grep=$GREP test/test.js",
     "test-cleanup": "rm -f .npmrc",
-    "start": "node ./bin.js"
+    "start": "node ./lib/bin.js"
   },
   "author": {
     "name": "Nolan Lawson",
