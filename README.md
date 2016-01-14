@@ -1,6 +1,8 @@
 local-npm [![Build Status](https://travis-ci.org/nolanlawson/local-npm.svg)](https://travis-ci.org/nolanlawson/local-npm) [![Coverage Status](https://coveralls.io/repos/nolanlawson/local-npm/badge.svg?branch=master&service=github)](https://coveralls.io/github/nolanlawson/local-npm?branch=master)
 ==========
 
+<img alt="local-npm" width="500px" src="https://cdn.rawgit.com/nolanlawson/local-npm/master/logo.svg" />
+
 `local-npm` is a Node server that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry. Only the modules that you explicitly `npm install` are saved locally.
 
 When you first install a module, it'll be fetched from the main npm registry. After that, the module and all its dependencies are stored in a local database, so you can expect subsequent installs to be much faster.
@@ -19,7 +21,7 @@ Usage
 Then
 
     $ local-npm
-    
+
 to start the server. (Note that it will write files in whatever directory you run it from.)
 
 Then set `npm` to point to the local server:
@@ -143,7 +145,7 @@ to run the linter:
 To run the tests:
 
     ./test.sh
-    
+
 _Note: do not try to do `npm test`. You have to run the bash script
 due to how we play around with the `.npmrc` file during testing._
 
