@@ -3,18 +3,13 @@ local-npm [![Build Status](https://travis-ci.org/nolanlawson/local-npm.svg)](htt
 
 <img alt="local-npm" width="500px" src="https://cdn.rawgit.com/nolanlawson/local-npm/5a37da8b51c31416d5b0e05f1c4fc9f896fbe3b7/logo.svg" />
 
-`local-npm` is a Node server that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry. Only the modules that you explicitly `npm install` are saved locally.
+`local-npm` is a Node server that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry.
 
-When you first install a module, it'll be fetched from the main npm registry. After that, the module and all its dependencies are stored in a local database, so you can expect subsequent installs to be much faster.
+This allows your `npm install` commands to (mostly) work offline. Also, they get faster and faster over time, as commonly-installed modules are aggressively cached.
 
-`local-npm` will also listen for changes from the remote registry, so you can expect updates to a module's metadata to be replicated within seconds of being published. (I.e. you won't get stuck with old versions.)
+### Overview
 
-If you're organizing a conference/meetup/whatever, you can also share this local server with multiple people.  So if your teammates are constantly installing the same modules over and over again, this can save a lot of time in the long run.
-
-`local-npm` is also a good way to make `npm install` work offline. Assuming new versions of a package haven't been published since you last installed, subsequent `npm install`s will all serve from the cache, without ever hitting a remote server.
-
-### Topics
-
+* [Introduction](#introduction)
 * [Usage](#usage)
 * [Command line options](#command-line-options)
 * [Easy install for OS X users](#easy-install-for-os-x-users)
@@ -22,6 +17,21 @@ If you're organizing a conference/meetup/whatever, you can also share this local
 * [Switching with npmrc](#switching-with-npmrc)
 * [Speed test](#speed-test)
 * [How it works](#how-it-works)
+
+Introduction
+---
+
+`local-npm` acts as a proxy between you and the main npm registry. You run `npm install` commands like normal, but under the hood, all requests are sent through the local server.
+
+When you first `npm install` a module, it'll be fetched from the main npm registry. After that, the module and all its dependencies (at that version) are stored in a local database, so you can expect subsequent installs to be much faster.
+
+The server will also listen for changes from the remote registry, so you can expect updates to a module's metadata to be replicated within seconds of being published. (I.e. you won't get stuck with old versions.)
+
+If you're organizing a conference/meetup/whatever, you can also share this local server with multiple people.  So if your teammates are constantly installing the same modules over and over again, this can save a lot of time in the long run.
+
+`local-npm` is also a good way to make `npm install` work offline. Assuming new versions of a package haven't been published since you last installed, subsequent `npm install`s will all serve from the cache, without ever hitting a remote server.
+
+Addy Osmani has [a nice post](https://addyosmani.com/blog/using-npm-offline/) comparing `local-npm` to other options.
 
 Usage
 ------
