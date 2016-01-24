@@ -13,6 +13,16 @@ If you're organizing a conference/meetup/whatever, you can also share this local
 
 `local-npm` is also a good way to make `npm install` work offline. Assuming new versions of a package haven't been published since you last installed, subsequent `npm install`s will all serve from the cache, without ever hitting a remote server.
 
+### Topics
+
+* [Usage](#usage)
+* [Command line options](#command-line-options)
+* [Easy install for OS X users](#easy-install-for-os-x-users)
+* [Browser UI](#browser-ui)
+* [Switching with npmrc](#switching-with-npmrc)
+* [Speed test](#speed-test)
+* [How it works](#how-it-works)
+
 Usage
 ------
 
@@ -33,13 +43,6 @@ To switch back, you can do:
     $ npm set registry https://registry.npmjs.org
 
 The same rules as for the [npm Australia mirror](http://www.npmjs.org.au/) apply here.
-
-### Quick tips
-
-* [Browse your local packages in a browser UI](#browser-ui)
-* [Switch between local and regular npm with npmrc](#switching-with-npmrc)
-* [Run `local-npm` as a permanent launch daemon on OS X](#setting-up-a-launch-daemon-on-os-x)
-* [See a speed test of `local-npm` vs regular npm](#speed-test)
 
 Command line options
 ----
@@ -86,6 +89,10 @@ $ local-npm \
 
 This will ensure that clients fetch tarballs from `192.168.x.x` instead of `127.0.0.1`.
 
+Easy install for OS X users
+----
+
+If you want `local-npm` to run permanently in the background whenever you log in, just use [this simple script](https://github.com/nolanlawson/local-npm-launch-agent).
 
 Browser UI
 ------
@@ -113,11 +120,6 @@ and to switch back:
     $ npmrc local
 
 Incidentally, though, `local-npm` [does allow you to publish](https://github.com/nolanlawson/local-npm/pull/33). Your `npm publish`es will just be proxied to the main npm registry.
-
-Setting up a launch daemon on OS X
-----
-
-If you want `local-npm` to run permanently in the background whenever you log in, instructions are in [this gist](https://gist.github.com/nolanlawson/83ba5862bd719925d9cd).
 
 Speed test
 ----
