@@ -36,6 +36,8 @@ Addy Osmani has [a nice post](https://addyosmani.com/blog/using-npm-offline/) co
 Usage
 ------
 
+If you're using OS X, take a look at [local-npm-launch-agent](https://github.com/nolanlawson/local-npm-launch-agent), a one-liner that sets everything up automatically. Otherwise:
+
     $ npm install -g local-npm
 
 Then
