@@ -131,7 +131,7 @@ and to switch back:
 
     $ npmrc local
 
-Incidentally, though, `local-npm` [does allow you to publish](https://github.com/nolanlawson/local-npm/pull/33). Your `npm publish`es will just be proxied to the main npm registry.
+Incidentally, though, `local-npm` does allow you to do `npm login` and `npm publish`. These commands will just be proxied to the main npm registry.
 
 Speed test
 ----
