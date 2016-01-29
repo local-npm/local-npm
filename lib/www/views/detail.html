@@ -1,18 +1,25 @@
 <div class="detail-container">
+  <p class="clearfix">
+    <a
+      class="btn btn-default pull-left"
+      href="#"
+      ng-href="#/"
+    >
+      <i class="glyphicon glyphicon-arrow-left"></i>
+      Back
+    </a>
+    <a
+      class="btn btn-link pull-right"
+      href="#"
+      ng-href="https://www.npmjs.org/{{module._id}}"
+      target="_blank"
+    >
+      View on npm
+      <i class="glyphicon glyphicon-new-window"></i>
+    </a>
+  </p>
   <div class="jumbotron details-jumbotron">
-    <div style="text-align:left;">
-      <h5 class="text-muted">
-        <a href="#" ng-href="#/">
-          <i class="glyphicon glyphicon-arrow-left"></i> Back
-        </a>
-      </h5>
-    </div>
-    <div style="text-align:left;">
-      <small class="text-muted pull-right">
-        <a href="#" ng-href="https://www.npmjs.org/{{module._id}}" target="_blank">
-          <i class="glyphicon glyphicon-export"></i> View on npm
-        </a>
-      </small>
+    <div class="text-left">
       <h1>{{module.name}}</h1>
       <p>{{module.description}}</p>
       <pre>$ npm install {{module._id}}</pre>

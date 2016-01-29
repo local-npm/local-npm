@@ -1,6 +1,9 @@
-.input-group {
-    max-width: 175px;
-    min-width: 125px;
+.jumbotron-logo {
+    fill: #333;
+    max-height: 3em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
 }
 
 @media (max-width: 767px) {
@@ -19,11 +22,8 @@
     .table > td,th {
       font-size: 12px;
     }
-    input.form-control { 
+    input.form-control {
       font-size: 12px;
-    }
-    .hide-on-mobile {
-        display: none;
     }
     .container {
         padding-left: 8px;
@@ -45,23 +45,13 @@ img.gravatar {
 }
 
 @media (min-width: 768px) {
-    .details-body {
-        margin: 0 100px 0 50px;
-    }
     .jumbotron.details-jumbotron {
-        padding: 20px 50px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
     .jumbotron {
         padding-top: 10px;
         padding-bottom: 10px;
-    }
-
-    .detail-container {
-        margin-right:auto;
-        margin-left:100px;
-    }
-    .input-group {
-        min-width: 175px;
     }
 }
 
@@ -77,12 +67,83 @@ img.gravatar {
     visibility: hidden;
 }
 
+.input-group {
+    max-width: 50%;
+    margin-bottom: 10px;
+}
+@media (max-width: 500px) {
+  .input-group {
+    max-width: 100%;
+  }
+}
+
 .btn-paginate {
     min-width: 100px;
     max-width: 150px;
-    margin: 0 2px;
+    margin-left: 4px;
+    margin-bottom: 10px;
+}
+@media (max-width: 500px) {
+  .btn-paginate {
+    display: block;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    margin-bottom: 10px;
+  }
 }
 
 .offline-warning {
     padding: 5px 10px;
+}
+
+@media (max-width: 500px) {
+    .table-collapse table,
+    .table-collapse tbody,
+    .table-collapse td,
+    .table-collapse th,
+    .table-collapse thead,
+    .table-collapse tr {
+        display:block
+    }
+
+    .table-collapse thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px
+    }
+
+    .table-collapse tbody>tr {
+        border: 1px solid #ddd;
+        border-bottom: none;
+        border-radius: 4px;
+        margin-bottom: 15px;
+    }
+
+    .table-collapse.table tbody>tr>td {
+        border-top: 0;
+    }
+
+    .table-collapse tbody>tr>td {
+        position: relative;
+        border: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table-collapse tbody>tr>td:before {
+        content: attr(data-th);
+        width: 95%;
+        display: block;
+        font-weight: bold;
+    }
+    .table-collapse-text-lg {
+      font-size: 1.75em;
+    }
+    .table-collapse-hidden {
+      display: none !important;
+    }
+}
+
+.text-nowrap {
+  white-space: nowrap;
 }
