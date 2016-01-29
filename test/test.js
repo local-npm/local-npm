@@ -133,6 +133,22 @@ describe('main test suite', function () {
     json.version.should.equal(pkg.version);
   });
 
+  it('can do a /latest request', async () => {
+    var res = await fetch('http://127.0.0.1:3030/blob-util/latest');
+    var json = await res.json();
+    json.name.should.equal('blob-util');
+    json.version.should.be.a('string');
+    json.dist.tarball.should.be.a('string');
+  });
+
+  it('can do a /latest request w/ invalid versions', async () => {
+    var res = await fetch('http://127.0.0.1:3030/handlebars/latest');
+    var json = await res.json();
+    json.name.should.equal('handlebars');
+    json.version.should.be.a('string');
+    json.dist.tarball.should.be.a('string');
+  });
+
   it('can do `npm info`', async () => {
     var res = (await exec('npm info pouchdb')).stdout;
     res.should.be.a('string');
