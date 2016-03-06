@@ -1,6 +1,6 @@
 {
   "name": "local-npm",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "description": "Local and offline-first npm mirror",
   "main": "lib/index.js",
   "bin": "lib/bin.js",
