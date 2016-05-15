@@ -33,6 +33,8 @@ If you're organizing a conference/meetup/whatever, you can also share this local
 
 Addy Osmani has [a nice post](https://addyosmani.com/blog/using-npm-offline/) comparing `local-npm` to other options.
 
+**Unmaintained?** Yup, this project works but is unmaintained [for various reasons](https://github.com/nolanlawson/local-npm/pull/122).
+
 Usage
 ------
 
