@@ -19,8 +19,8 @@ This allows your `npm install` commands to (mostly) work offline. Also, they get
 * [Speed test](#speed-test)
 * [How it works](#how-it-works)
 
-Unmaintained
-------------
+Unmaintained notice
+-------------------
 
 This project works but is unmaintained [for various reasons](https://github.com/nolanlawson/local-npm/pull/122). An alternative is to use the [--cache-min option](https://addyosmani.com/blog/using-npm-offline/) instead:
 
