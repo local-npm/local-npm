@@ -9,6 +9,7 @@ This allows your `npm install` commands to (mostly) work offline. Also, they get
 
 ### Overview
 
+* [Unmaintained notice](#unmaintained-notice)
 * [Introduction](#introduction)
 * [Usage](#usage)
 * [Command line options](#command-line-options)
@@ -17,6 +18,15 @@ This allows your `npm install` commands to (mostly) work offline. Also, they get
 * [Switching with npmrc](#switching-with-npmrc)
 * [Speed test](#speed-test)
 * [How it works](#how-it-works)
+
+Unmaintained notice
+-------------------
+
+This project works but is unmaintained [for various reasons](https://github.com/nolanlawson/local-npm/pull/122). An alternative is to use the [--cache-min option](https://addyosmani.com/blog/using-npm-offline/) instead:
+
+```sh
+npm install --cache-min 9999999
+```
 
 Introduction
 ---
@@ -32,8 +42,6 @@ If you're organizing a conference/meetup/whatever, you can also share this local
 `local-npm` is also a good way to make `npm install` work offline. Assuming new versions of a package haven't been published since you last installed, subsequent `npm install`s will all serve from the cache, without ever hitting a remote server.
 
 Addy Osmani has [a nice post](https://addyosmani.com/blog/using-npm-offline/) comparing `local-npm` to other options.
-
-**Unmaintained?** Yup, this project works but is unmaintained [for various reasons](https://github.com/nolanlawson/local-npm/pull/122).
 
 Usage
 ------
