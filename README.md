@@ -2,6 +2,18 @@
 
 **This project is a fork of [local-npm](https://github.com/nolanlawson/local-npm), which at the time I write this is unmaintained/discontinued. I highly recommend using his version though, until `registry-alpha` hits a 1.0 release.**
 
+
+# Install as a service
+
+    git clone https://github.com/wmhilton/registry-alpha
+    npm link
+    ./install.sh
+
+Note: the install script has only been tested on Ubuntu and could use a lot of work
+
+About
+-----
+
 `registry-alpha` is a Node server that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry.
 
 This allows your `npm install` commands to (mostly) work offline. Also, they get faster and faster over time, as commonly-installed modules are aggressively cached.
