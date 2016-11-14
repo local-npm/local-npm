@@ -1,7 +1,7 @@
 {
   "name": "registry-alpha",
   "version": "0.0.0",
-  "description": "Local and offline-first npm mirror",
+  "description": "A next-generation registry",
   "main": "lib/index.js",
   "bin": "lib/bin.js",
   "scripts": {
@@ -14,12 +14,18 @@
     "start": "node ./lib/bin.js"
   },
   "author": {
-    "name": "Nolan Lawson",
-    "email": "nolan@nolanlawson.com"
+    "name": "Will Hilton",
+    "email": "wmhilton@gmail.com"
   },
+  "contributors": [
+    {
+      "name": "Nolan Lawson",
+      "email": "nolan@nolanlawson.com"
+    }
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/nolanlawson/local-npm.git"
+    "url": "https://github.com/wmhilton/registry-alpha.git"
   },
   "license": "Apache-2.0",
   "dependencies": {
