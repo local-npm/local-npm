@@ -1,7 +1,7 @@
 {
-  "name": "registry-alpha",
+  "name": "modserv",
   "version": "0.0.1",
-  "description": "A next-generation registry",
+  "description": "A next-generation registry and node module server",
   "main": "lib/index.js",
   "bin": "lib/bin.js",
   "scripts": {
