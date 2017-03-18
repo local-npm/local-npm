@@ -2,8 +2,30 @@
 
 **This project is a fork of [local-npm](https://github.com/nolanlawson/local-npm), which at the time I write this is unmaintained/discontinued. I highly recommend using his version though, until `modserv` hits a 1.0 release.**
 
+## Run as a docker container (prefered method)
 
-# Install as a service
+    docker run --detach --restart=always -p 80:80 --name my-registry --volume registry:/srv/data_volume wmhilton/modserv
+
+The config file and the downloaded registry data are stored in a persistant volume (which we named `registry`) mounted inside the container at `/srv/data_volume`.
+Where Docker creates volumes is system specific, but you can find the host mountpoint with:
+
+```sh
+root@ubuntu:~$ docker volume inspect registry
+[
+    {
+        "Driver": "local",
+        "Labels": null,
+        "Mountpoint": "/var/lib/docker/volumes/registry/_data",
+        "Name": "registry",
+        "Options": {},
+        "Scope": "local"
+    }
+]
+```
+
+Now that you know the config file is `/var/lib/docker/volumes/registry/_data/config.json` you can edit it to set the `url-base`, `ui-url`, etc to suit your needs. Whenever you edit it, restart the docker container with `docker restart my-registry`. 
+
+## Install as a service (un-maintained)
 
     git clone https://github.com/wmhilton/modserv
     npm link
