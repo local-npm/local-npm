@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:6
+FROM node:6
 LABEL maintainer "William Hilton <wmhilton@gmail.com>"
 WORKDIR /srv
 COPY . .
