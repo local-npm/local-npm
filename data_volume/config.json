@@ -1,4 +1,5 @@
 { "port": 80
 , "url-base": "https://registry.node-modules.io"
 , "ui-url": "https://browse.node-modules.io"
+, "directory": "/srv/data_volume/db"
 }
