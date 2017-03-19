@@ -1,7 +1,6 @@
 language: node_js
 
-node_js:
-  - "stable"
+node_js: 6
 script: bash ./test.sh
 sudo: false
 before_script:
@@ -22,10 +21,3 @@ env:
 branches:
   only:
   - master
-
-matrix:
-  include:
-    - node_js: "0.12"
-      env: COMMAND=test
-    - node_js: "4.0.0"
-      env: COMMAND=test
