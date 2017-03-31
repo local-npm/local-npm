@@ -1,6 +1,6 @@
 # modserv
 
-**This project is a fork of [local-npm](https://github.com/nolanlawson/local-npm), which at the time I write this is unmaintained/discontinued. I highly recommend using his version though, until `modserv` hits a 1.0 release.**
+**This project is a fork of [local-npm](https://github.com/nolanlawson/local-npm), which at the time I write this is unmaintained/discontinued. `modserv` hasn't hit a 1.0 release yet, but I use it daily as my primary registry mirror and in a company setting where it has served me faithfully and with much better reliability than `registry.npmjs.org` ever did.**
 
 ## Run as a docker container (prefered method)
 
