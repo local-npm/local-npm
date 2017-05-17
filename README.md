@@ -1,7 +1,8 @@
-local-npm [![Build Status](https://travis-ci.org/nolanlawson/local-npm.svg)](https://travis-ci.org/nolanlawson/local-npm) [![Coverage Status](https://coveralls.io/repos/nolanlawson/local-npm/badge.svg?branch=master&service=github)](https://coveralls.io/github/nolanlawson/local-npm?branch=master) ![project unmaintained](https://img.shields.io/badge/project-unmaintained-red.svg)
-==========
+# local-npm
+[![Build Status](https://travis-ci.org/local-npm/local-npm.svg)](https://travis-ci.org/local-npm/local-npm) [![Coverage Status](https://coveralls.io/repos/local-npm/local-npm/badge.svg?branch=master&service=github)](https://coveralls.io/github/local-npm/local-npm?branch=master)
 
-<img alt="local-npm" width="500px" src="https://cdn.rawgit.com/nolanlawson/local-npm/5a37da8b51c31416d5b0e05f1c4fc9f896fbe3b7/logo.svg" />
+
+<img alt="local-npm" width="500px" src="https://cdn.rawgit.com/local-npm/local-npm/5a37da8b51c31416d5b0e05f1c4fc9f896fbe3b7/logo.svg" />
 
 `local-npm` is a Node server that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry.
 
@@ -9,7 +10,6 @@ This allows your `npm install` commands to (mostly) work offline. Also, they get
 
 ### Overview
 
-* [Unmaintained notice](#unmaintained-notice)
 * [Introduction](#introduction)
 * [Usage](#usage)
 * [Command line options](#command-line-options)
@@ -18,15 +18,6 @@ This allows your `npm install` commands to (mostly) work offline. Also, they get
 * [Switching with npmrc](#switching-with-npmrc)
 * [Speed test](#speed-test)
 * [How it works](#how-it-works)
-
-Unmaintained notice
--------------------
-
-This project works but is unmaintained [for various reasons](https://github.com/nolanlawson/local-npm/pull/122). An alternative is to use the [--cache-min option](https://addyosmani.com/blog/using-npm-offline/) instead:
-
-```sh
-npm install --cache-min 9999999
-```
 
 Introduction
 ---
@@ -46,7 +37,7 @@ Addy Osmani has [a nice post](https://addyosmani.com/blog/using-npm-offline/) co
 Usage
 ------
 
-If you're using OS X, take a look at [local-npm-launch-agent](https://github.com/nolanlawson/local-npm-launch-agent), a one-liner that sets everything up automatically. Otherwise:
+If you're using OS X, take a look at [local-npm-launch-agent](https://github.com/local-npm/local-npm-launch-agent), a one-liner that sets everything up automatically. Otherwise:
 
     $ npm install -g local-npm
 
@@ -114,7 +105,7 @@ This will ensure that clients fetch tarballs from `192.168.x.x` instead of `127.
 Easy install for OS X users
 ----
 
-If you want `local-npm` to run permanently in the background whenever you log in, just use [this simple script](https://github.com/nolanlawson/local-npm-launch-agent).
+If you want `local-npm` to run permanently in the background whenever you log in, just use [this simple script](https://github.com/local-npm/local-npm-launch-agent).
 
 Browser UI
 ------
@@ -146,7 +137,7 @@ Incidentally, though, `local-npm` does allow you to do `npm login` and `npm publ
 Speed test
 ----
 
-For a speed test of `local-npm` versus regular npm, [see these results](https://github.com/nolanlawson/test-local-npm-speed#readme).
+For a speed test of `local-npm` versus regular npm, [see these results](https://github.com/local-npm/test-local-npm-speed#readme).
 
 How it works
 -----

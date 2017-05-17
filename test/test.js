@@ -273,16 +273,17 @@ describe('main test suite', function () {
       }
     }
 
-
     // there are some weird old packages that don't npm install
     // correctly. go figure
     var blacklist = [
       'ClearSilver', 'Babel', 'asyncevents', 'OnCollect',
-      'RemoteTestService'];
+      'RemoteTestService', '_design/app', '_design/scratch', 'akala-server', 'UniversalMikeyGeneratedApp', 'alliance-npm-logger'];
 
     var packages = (await db.changes({limit: 10})).results
       .map(row => row.id)
       .filter(id => blacklist.indexOf(id) == -1);
+
+    console.log(packages);
 
     await ncp('./test/project3', WORK_DIR);
 
