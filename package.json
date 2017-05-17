@@ -19,8 +19,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nolanlawson/local-npm.git"
+    "url": "https://github.com/local-npm/local-npm.git"
   },
+  "contributors": [
+    "Gabriel J. Csapo <gabecsapo@gmail.com>"
+  ],
   "license": "Apache-2.0",
   "dependencies": {
     "bluebird": "^2.2.2",
