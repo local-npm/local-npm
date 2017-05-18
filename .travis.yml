@@ -25,7 +25,9 @@ branches:
 
 matrix:
   include:
-    - node_js: "0.12"
+    - node_js: "4"
       env: COMMAND=test
-    - node_js: "4.0.0"
+    - node_js: "6"
+      env: COMMAND=test
+    - node_js: "7"
       env: COMMAND=test

@@ -13,6 +13,9 @@
     "test-cleanup": "rm -f .npmrc",
     "start": "node ./lib/bin.js"
   },
+  "engines" : {
+    "node" : ">= 4"
+  },
   "author": {
     "name": "Nolan Lawson",
     "email": "nolan@nolanlawson.com"
