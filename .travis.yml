@@ -1,33 +1,22 @@
-language: node_js
-
-node_js:
-  - "stable"
-script: bash ./test.sh
 sudo: false
+language: node_js
+node_js:
+  - "7"
+script: bash ./test.sh
 before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - "sleep 5"
-    # Fail early so we dont run hours of saucelabs if we know there
-    # is a lint failure
   - npm run lint
-
 env:
   matrix:
   - COMMAND=test
   - HELP=1 COMMAND=test
   - DAISY_CHAIN=1 COMMAND=test
   - COVERAGE=1 REPORT_COVERAGE=1 COMMAND=test
-
-branches:
-  only:
-  - master
-
 matrix:
   include:
     - node_js: "4"
       env: COMMAND=test
     - node_js: "6"
-      env: COMMAND=test
-    - node_js: "7"
       env: COMMAND=test
