@@ -1,8 +1,5 @@
 'use strict';
 
-var Promise = require('bluebird');
-global.Promise = Promise; // forces pouchdb to use bluebird
-Promise.longStackTraces();
 var exec = require('child-process-promise').exec;
 var denodeify = require('denodeify');
 var mkdirp = denodeify(require('mkdirp'));
@@ -158,7 +155,6 @@ describe('main test suite', function () {
 
   it('can do `npm view`', async () => {
     var res = (await exec('npm view moment')).stdout;
-    console.log(res);
     res.should.be.a('string');
     expect(res).to.contain(' \n{ name: \'moment\'');
   });
