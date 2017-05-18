@@ -16,6 +16,7 @@ var PouchDB = require('pouchdb');
 var memdown = require('memdown');
 var semver = require('semver');
 var should = require('chai').should();
+var expect = require('chai').expect;
 var pkg = require('../package.json');
 
 var WORK_DIR = 'work_dir';
@@ -153,6 +154,13 @@ describe('main test suite', function () {
     var res = (await exec('npm info pouchdb')).stdout;
     res.should.be.a('string');
     res.should.match(/pouchdb/);
+  });
+
+  it('can do `npm view`', async () => {
+    var res = (await exec('npm view moment')).stdout;
+    console.log(res);
+    res.should.be.a('string');
+    expect(res).to.contain(' \n{ name: \'moment\'');
   });
 
   it.skip('does a package with a postinstall step', async () => {
