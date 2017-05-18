@@ -58,6 +58,7 @@
     "istanbul": "^0.4.1",
     "istanbul-coveralls": "^1.0.3",
     "memdown": "^1.2.4",
+    "mkdirp": "^0.5.1",
     "mocha": "^3.4.1",
     "ncp": "^2.0.0",
     "nock": "^9.0.13",
