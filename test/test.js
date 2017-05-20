@@ -287,8 +287,6 @@ describe('main test suite', function () {
       .map(row => row.id)
       .filter(id => blacklist.indexOf(id) == -1);
 
-    console.log(packages);
-
     await ncp('./test/project3', WORK_DIR);
 
     // check that they are npm installed

@@ -9,13 +9,13 @@
 
 var nock = require('nock');
 
-console.log('mocking offline state with nock...');
+console.log('mocking offline state with nock...'); // eslint-disable-line
 nock('https://skimdb.npmjs.com:443', {"encodedQueryParams":true})
   .get('/registry/')
   .replyWithError('oh no you are offline!');
 
 setTimeout(function () {
-  console.log('no more mocking');
+  console.log('no more mocking'); // eslint-disable-line
   nock.restore();
 }, 5000);
 
