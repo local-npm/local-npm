@@ -1,22 +1,14 @@
-sudo: false
 language: node_js
-node_js:
-  - "7"
-script: bash ./test.sh
-before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - "sleep 5"
+script:
+  - npm install node-coverage-server -g
   - npm run lint
-env:
-  matrix:
-  - COMMAND=test
-  - HELP=1 COMMAND=test
-  - DAISY_CHAIN=1 COMMAND=test
-  - COVERAGE=1 REPORT_COVERAGE=1 COMMAND=test
-matrix:
-  include:
-    - node_js: "4"
-      env: COMMAND=test
-    - node_js: "6"
-      env: COMMAND=test
+  - npm run coverage
+  - cat coverage/lcov.info | node-coverage-cli --url https://node-coverage-server.herokuapp.com
+node_js:
+  - "4"
+  - "5"
+  - "6"
+  - "7"
+os:
+  - linux
+sudo: false

@@ -3,7 +3,6 @@
   "version": "1.6.0",
   "description": "Local and offline-first npm mirror",
   "main": "lib/index.js",
-  "bin": "bin/index.js",
   "scripts": {
     "test": "tape test/**.js",
     "coverage": "tap test/**.js --coverage --coverage-report=html",
@@ -16,6 +15,9 @@
   "author": {
     "name": "Nolan Lawson",
     "email": "nolan@nolanlawson.com"
+  },
+  "bin": {
+    "local-npm": "bin/index.js"
   },
   "repository": {
     "type": "git",
