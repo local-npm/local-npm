@@ -1,25 +1,15 @@
 {
-  "parser": "babel-eslint",
-  "rules": {
-    "strict": 0,
-    "semi": [
-      2,
-      "always"
-    ],
-    "indent": [
-      2,
-      2,
-      {
-        "SwitchCase": 1
-      }
-    ],
-    "no-unused-vars": [
-      2,
-      {
-        "vars": "all",
-        "args": "after-used"
-      }
-    ],
-    "global-require": 2
-  }
+    "extends": "eslint:recommended",
+    "env": {
+        "node": true,
+        "mocha": true,
+        "es6": true
+    },
+    "rules": {
+        "no-constant-condition": 0
+    },
+    "parserOptions": {
+        "ecmaVersion": 2017,
+        "sourceType": "module"
+    }
 }
