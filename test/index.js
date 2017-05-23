@@ -7,7 +7,7 @@ const exec = require('child_process').exec;
 const PouchDB = require('pouchdb');
 
 const localNpm = require('../lib/index');
-let server = '';
+var server = '';
 
 test('local-npm', (t) => {
     t.plan(13);
@@ -43,7 +43,7 @@ test('local-npm', (t) => {
 
     t.test('should be able get the _skimdb url', (t) => {
         http.get('http://127.0.0.1:3030/_skimdb', (res) => {
-          let body = '';
+          var body = '';
           res.on('data', (d) => body += d.toString('utf8'));
           res.on('end', function() {
             t.deepEqual(Object.keys(JSON.parse(body)).sort(), [ 'adapter', 'auto_compaction', 'backend_adapter', 'db_name', 'doc_count', 'instance_start_time', 'update_seq' ]);
@@ -55,7 +55,7 @@ test('local-npm', (t) => {
     });
 
     t.test('should be able to do a simple npm install', (t) => {
-      let output = '';
+      var output = '';
 
       const install = spawn('npm', ['install'], {
         cwd: path.resolve(__dirname, 'fixtures', 'project')
@@ -72,7 +72,6 @@ test('local-npm', (t) => {
         t.ok(fs.existsSync(path.resolve(__dirname, 'fixtures', 'project', 'node_modules')));
         t.ok(fs.existsSync(path.resolve(__dirname, 'fixtures', 'project', 'node_modules', 'colors')));
         t.ok(fs.existsSync(path.resolve(__dirname, 'fixtures', 'project', 'node_modules', 'lodash')));
-        t.ok(fs.existsSync(path.resolve(__dirname, 'fixtures', 'project', 'node_modules', 'minimist')));
         t.ok(fs.existsSync(path.resolve(__dirname, 'fixtures', 'project', 'node_modules', 'mkdirp')));
         t.ok(fs.existsSync(path.resolve(__dirname, 'fixtures', 'project', 'node_modules', 'leveldown')));
         t.end();
@@ -100,7 +99,7 @@ test('local-npm', (t) => {
 
     t.test('should be able to get /', (t) => {
       http.get('http://127.0.0.1:3030/', (res) => {
-        let body = '';
+        var body = '';
         res.on('data', (d) => body += d.toString('utf8'));
         res.on('end', function() {
           const info = JSON.parse(body);
@@ -116,7 +115,7 @@ test('local-npm', (t) => {
 
     t.test('should be able to get /latest', (t) => {
       http.get('http://127.0.0.1:3030/blob-util/latest', (res) => {
-        let body = '';
+        var body = '';
         res.on('data', (d) => body += d.toString('utf8'));
         res.on('end', function() {
           const pack = JSON.parse(body);
@@ -133,7 +132,7 @@ test('local-npm', (t) => {
 
     t.test('should be able to fetch a tarball', (t) => {
       http.get('http://127.0.0.1:3030/tarballs/moment/1.0.0.tgz', (res) => {
-        let body = '';
+        var body = '';
         res.on('data', (d) => body += d.toString('utf8'));
         res.on('end', function() {
           t.equal(body.length, 191468);
@@ -145,7 +144,7 @@ test('local-npm', (t) => {
     });
 
     t.test('should not be allowed to publish over an already existing version of a module', (t) => {
-      let output = '';
+      var output = '';
 
       const install = spawn('npm', ['publish'], {
         cwd: path.resolve(__dirname, 'fixtures', 'publish')

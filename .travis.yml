@@ -6,7 +6,6 @@ script:
   - cat coverage/lcov.info | node-coverage-cli --url https://node-coverage-server.herokuapp.com
 node_js:
   - "4"
-  - "5"
   - "6"
   - "7"
 os:

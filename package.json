@@ -6,7 +6,7 @@
   "scripts": {
     "test": "tape test/**.js",
     "coverage": "tap test/**.js --coverage --coverage-report=html",
-    "lint": "eslint lib/ test/",
+    "lint": "eslint .",
     "start": "node ./lib/bin.js"
   },
   "engines": {
