@@ -191,8 +191,7 @@ test('local-npm', (t) => {
     });
 
     t.test('should should teardown local-npm', (t) => {
-      server.close();
-      process.kill(0, 'SIGINT');
+      server.shutdown();
       t.end();
     });
 });
