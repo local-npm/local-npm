@@ -38,4 +38,4 @@ if (argv.h) {
   process.exit(0);
 }
 
-require('./index')(argv);
+require('../lib/index')(argv);

@@ -1,1 +1,6 @@
 lib/www
+coverage
+binarydb
+.nyc_output
+node_modules
+skimdb

@@ -3,14 +3,10 @@
   "version": "1.6.0",
   "description": "Local and offline-first npm mirror",
   "main": "lib/index.js",
-  "bin": "lib/bin.js",
   "scripts": {
-    "test": "echo \"There is no 'npm test'! Run ./test.sh instead.\" && exit 1",
-    "run-test": "run-scripts main-test test-cleanup",
-    "lint": "eslint lib/ test/",
-    "write-npmrc": "echo registry=http://127.0.0.1:3030/ > .npmrc",
-    "main-test": "babel-node node_modules/.bin/_mocha --grep=$GREP test/test.js",
-    "test-cleanup": "rm -f .npmrc",
+    "test": "tape test/**.js",
+    "coverage": "tap test/**.js --coverage --coverage-report=html",
+    "lint": "eslint .",
     "start": "node ./lib/bin.js"
   },
   "engines": {
@@ -19,6 +15,9 @@
   "author": {
     "name": "Nolan Lawson",
     "email": "nolan@nolanlawson.com"
+  },
+  "bin": {
+    "local-npm": "bin/index.js"
   },
   "repository": {
     "type": "git",
@@ -46,22 +45,9 @@
     "yargs": "^8.0.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.4.0",
-    "babel-plugin-syntax-async-functions": "^6.3.13",
-    "babel-plugin-transform-regenerator": "^6.3.26",
-    "babel-preset-es2015": "^6.3.13",
-    "chai": "^3.5.0",
-    "child-process-promise": "^2.2.1",
-    "denodeify": "^1.2.1",
     "eslint": "^3.19.0",
-    "istanbul": "^0.4.1",
-    "istanbul-coveralls": "^1.0.3",
     "memdown": "^1.2.4",
-    "mocha": "^3.4.1",
-    "ncp": "^2.0.0",
-    "nock": "^9.0.13",
-    "node-fetch": "^1.3.3",
-    "rimraf": "^2.5.0",
-    "run-scripts": "^0.4.0"
+    "tap": "^10.3.2",
+    "tape": "^4.6.3"
   }
 }

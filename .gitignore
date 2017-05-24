@@ -16,3 +16,4 @@ coverage
 npm-debug.log*
 config.json
 log.txt
+.nyc_output
