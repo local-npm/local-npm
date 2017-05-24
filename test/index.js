@@ -10,7 +10,7 @@ const localNpm = require('../lib/index');
 var server = '';
 
 test('local-npm', (t) => {
-    t.plan(13);
+    t.plan(14);
 
     t.test('should write a .npmrc file in the root', (t) => {
       fs.writeFile(path.resolve(__dirname, '..', '.npmrc'), 'registry=http://127.0.0.1:3030/', (err) => {
@@ -75,6 +75,28 @@ test('local-npm', (t) => {
         t.ok(fs.existsSync(path.resolve(__dirname, 'fixtures', 'project', 'node_modules', 'mkdirp')));
         t.ok(fs.existsSync(path.resolve(__dirname, 'fixtures', 'project', 'node_modules', 'leveldown')));
         t.end();
+      });
+    });
+
+    t.test('should show download metrics', (t) => {
+      http.get('http://127.0.0.1:3030/tarballs/lodash/3.0.0.tgz', () => {
+        http.get('http://127.0.0.1:3030/tarballs/lodash/3.0.0.tgz', () => {
+          http.get('http://127.0.0.1:3030/lodash/3.0.0', (res) => {
+            var body = '';
+            res.on('data', (d) => body += d.toString('utf8'));
+            res.on('end', function() {
+              const info = JSON.parse(body);
+              t.equal(info.downloads, 2);
+              t.end();
+            });
+          }).on('error', (e) => {
+            t.fail(e);
+          });
+        }).on('error', (e) => {
+          t.fail(e);
+        });
+      }).on('error', (e) => {
+        t.fail(e);
       });
     });
 
