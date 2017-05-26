@@ -4,4 +4,5 @@
 - deprecates the support for `node@0.12`
 - fixes issue with not forwarding non-install commands
 - updates dependencies
-- fixes assumption that tarball location is predefined. 
+- fixes assumption that tarball location is predefined.
+- Add support for "downloads" metadata
