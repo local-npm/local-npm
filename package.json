@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "start": "node ./bin/index.js",
     "build": "NODE_ENV=production webpack --progress",
+    "build-stats": "NODE_ENV=production webpack --json > stats.json",
     "dev": "webpack-dev-server --hot"
   },
   "engines": {

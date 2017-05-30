@@ -3,7 +3,8 @@ import moment from 'moment';
 import PouchDB from 'pouchdb';
 import Find from 'pouchdb-find';
 import Marked from 'marked';
-import { LineChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Line } from 'recharts';
+import PropTypes from 'prop-types';
+import { LineChart, CartesianGrid, Tooltip, Line } from 'recharts';
 
 PouchDB.plugin(Find);
 
@@ -26,7 +27,6 @@ class Package extends React.Component {
   findPackages(name) {
     const self = this;
     const { db } = this.state;
-    const start = Date.now();
 
     var opts = {
       startkey: name,
@@ -50,7 +50,7 @@ class Package extends React.Component {
   render() {
     const self = this;
     const { doc } = this.state;
-    const { time, bugs, author, repository, license, description, homepage, tags, readme, contributors, maintainers } = doc;
+    const { time, bugs, author, repository, license, description, homepage, readme, contributors, maintainers } = doc;
     const latest = doc['dist-tags'] && doc['dist-tags']['latest'];
     const keywords = latest && doc.versions[latest].keywords;
 
@@ -62,6 +62,11 @@ class Package extends React.Component {
                         <a style={{ fontSize: '38px', color: 'black', borderBottom: '1px dotted #e9e9e9' }} href={ `package/${doc.name}` }>{doc.name}</a>
                         { license ? <span style={{ padding: '3px', display: 'inline-block', fontSize: '10px', color: '#9a9a9a', marginRight: '5px', marginLeft: '5px', borderRadius: '5px' }} className="badge"> { license } </span> : '' }
                         { latest ? <span style={{ fontWeight: 'bold', color: '#9a9a9a', fontSize: '12px' }}> { latest } </span> : '' }
+                        { keywords && keywords.length > 0 ?
+                            <div style={{ marginTop: '10px' }}>
+                                <span className="fa fa-tag"> <small> { keywords.slice(0, 4).join(', ') } </small> </span>
+                            </div>
+                        : '' }
                         <div style={{ marginTop: '10px', marginBottom: '10px' }}> { description } </div>
                     </div>
                     <br/>
@@ -123,20 +128,26 @@ class Package extends React.Component {
                 <p style={{ fontWeight: '300', fontSize: '28px', margin: '0', borderBottom: '1px solid #e9e9e9' }}> Contributors </p>
                 { contributors ?
                     <ul>
-                        { contributors.map((contrib) => <li> { contrib.name } </li>) }
+                        { contributors.map((contrib, i) => <li key={ i }> { contrib.name } </li>) }
                     </ul>
                 : '' }
 
                 <p style={{ fontWeight: '300', fontSize: '28px', margin: '0', borderBottom: '1px solid #e9e9e9' }}> Maintainers </p>
                 { maintainers ?
                     <ul>
-                        { maintainers.map((contrib) => <li> { contrib.name } </li>) }
+                        { maintainers.map((contrib, i) => <li key={ i }> { contrib.name } </li>) }
                     </ul>
                 : '' }
             </div>
         </div>
     )
   }
+}
+
+Package.propTypes = {
+    params: PropTypes.shape({
+        name: PropTypes.string
+    })
 }
 
 export default Package;

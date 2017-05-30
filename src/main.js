@@ -14,7 +14,8 @@ class Main extends React.Component {
       this.state = {
           db,
           packages: [],
-          index: 0
+          index: 0,
+          error: ''
       };
 
       this.findPackages();
@@ -32,8 +33,10 @@ class Main extends React.Component {
             packages: [res],
             time: Date.now() - start
         });
-      }).catch((err) => {
-        console.log(err);
+      }).catch((error) => {
+         self.setState({
+             error
+         });
       });
   }
   search(e) {
@@ -44,15 +47,15 @@ class Main extends React.Component {
       const start = Date.now();
 
       // packages don't have any particular case, so fudge it
-      var lc = [name.toLowerCase(), name.toLowerCase()];
-      var uc = [name.toUpperCase(), name.toUpperCase()];
+      const lc = [name.toLowerCase(), name.toLowerCase()];
+      const uc = [name.toUpperCase(), name.toUpperCase()];
 
       // search locally and remote since we might not be synced at 100% yet
-      var queryPermutations = [ lc, uc ];
+      const queryPermutations = [ lc, uc ];
       const pouches = [db];
 
-      return Promise.all(pouches.map(function (pouch) {
-        return Promise.all(queryPermutations.map(function (query) {
+      return Promise.all(pouches.map((pouch) => {
+        return Promise.all(queryPermutations.map(() => {
           var opts = {
             startkey: name,
             endkey: name + '\uffff',
@@ -60,11 +63,11 @@ class Main extends React.Component {
             include_docs: true
           };
 
-          return pouch.allDocs(opts).then(null, function (err) {
+          return pouch.allDocs(opts).then(null, () => {
             return { rows: [] }; // works offline
           });
         }));
-      })).then(function (resultLists) {
+      })).then((resultLists) => {
           self.setState({
               packages: resultLists[0],
               time: Date.now() - start
@@ -88,7 +91,7 @@ class Main extends React.Component {
             </div>
             { results && results.map((pack, i) => {
                 const { doc } = pack;
-                const { author, repository, license, description, homepage, tags } = doc;
+                const { author, repository, license, description, homepage } = doc;
                 const latest = doc['dist-tags'] && doc['dist-tags']['latest'];
                 const keywords = latest && doc.versions[latest].keywords;
 
