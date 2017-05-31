@@ -4,3 +4,4 @@ binarydb
 .nyc_output
 node_modules
 skimdb
+dist
