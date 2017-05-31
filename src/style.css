@@ -19,6 +19,10 @@ html, body, div#root {
     bottom: 0;
 }
 
+.readme pre code {
+    display: block !important;
+}
+
 .readme code {
     display: inline-block;
     padding: .2rem .4rem;

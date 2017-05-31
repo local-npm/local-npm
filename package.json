@@ -41,7 +41,6 @@
     "mkdirp": "^0.5.1",
     "morgan": "^1.2.2",
     "pouchdb": "^6.2.0",
-    "pouchdb-find": "^6.2.0",
     "request": "^2.39.0",
     "semver": "^5.0.1",
     "serve-favicon": "^2.0.1",
@@ -74,6 +73,7 @@
     "tape": "^4.6.3",
     "url-loader": "^0.5.8",
     "webpack": "^2.5.1",
-    "webpack-dev-server": "^2.4.5"
+    "webpack-dev-server": "^2.4.5",
+    "whatwg-fetch": "^2.0.3"
   }
 }

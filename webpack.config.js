@@ -10,6 +10,7 @@ const config = {
     devServer: {
         port: 5000,
         proxy: {
+            "/**": "http://localhost:5080",
             "/_browse/**": "http://localhost:5080",
             "/_skimdb/**": "http://localhost:5080"
         },

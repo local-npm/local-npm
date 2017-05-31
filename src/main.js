@@ -6,9 +6,9 @@ class Main extends React.Component {
   constructor(props) {
       super(props);
 
-      var couchUrl = window.location.protocol + '//' + window.location.host + '/_skimdb';
-      var db = new PouchDB(couchUrl, {
-        auto_compaction: true
+      const couchUrl = window.location.protocol + '//' + window.location.host;
+      const db = new PouchDB(`${couchUrl}/_skimdb`, {
+          auto_compaction: true
       });
 
       this.state = {
