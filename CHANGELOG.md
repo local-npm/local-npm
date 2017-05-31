@@ -6,3 +6,4 @@
 - updates dependencies
 - fixes assumption that tarball location is predefined.
 - Add support for "downloads" metadata
+- update front-end to be react instead of angular
