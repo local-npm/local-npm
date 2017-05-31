@@ -1,4 +1,4 @@
-## Unreleased
+## 2.0.0 (05/31/2017)
 
 - fixes issue with request entity too large, by setting the limit of `express-http-proxy` limit to `Infinity`
 - deprecates the support for `node@0.12`
