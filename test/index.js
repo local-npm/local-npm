@@ -10,7 +10,7 @@ const localNpm = require('../lib/index');
 var server = '';
 
 test('local-npm', (t) => {
-    t.plan(14);
+    t.plan(15);
 
     t.test('should write a .npmrc file in the root', (t) => {
       fs.writeFile(path.resolve(__dirname, '..', '.npmrc'), 'registry=http://127.0.0.1:3030/', (err) => {
@@ -163,6 +163,19 @@ test('local-npm', (t) => {
       }).on('error', (e) => {
         t.fail(e);
       });
+    });
+
+    t.test('should be able to fetch a scoped package tarball', (t) => {
+        http.get('http://127.0.0.1:3030/tarballs/@ng-bootstrap/ng-bootstrap/1.0.0-alpha.26.tgz', (res) => {
+          var body = '';
+          res.on('data', (d) => body += d.toString('utf8'));
+          res.on('end', function() {
+            t.equal(body.length, 225450);
+            t.end();
+          });
+        }).on('error', (e) => {
+          t.fail(e);
+        });
     });
 
     t.test('should not be allowed to publish over an already existing version of a module', (t) => {

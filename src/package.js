@@ -27,7 +27,7 @@ class Package extends React.Component {
               doc: json
           });
       }).catch(function(ex) {
-        console.log('parsing failed', ex)
+        console.log('parsing failed', ex); // eslint-disable-line
       })
   }
   timeFormatter(v, l) {
