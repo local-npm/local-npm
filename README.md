@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/local-npm/local-npm.svg)](https://travis-ci.org/local-npm/local-npm) [![Coverage Status](https://coveralls.io/repos/local-npm/local-npm/badge.svg?branch=master&service=github)](https://coveralls.io/github/local-npm/local-npm?branch=master)
 
 
-<img alt="local-npm" width="500px" src="https://cdn.rawgit.com/local-npm/local-npm/5a37da8b51c31416d5b0e05f1c4fc9f896fbe3b7/logo.svg" />
+<img alt="local-npm" width="500px" src="assets/logo.svg" />
 
 `local-npm` is a Node server that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry.
 
@@ -114,7 +114,7 @@ A rudimentary npm-like UI that allows you to search modules and see their descri
 
 | main | package |
 |------|---------|
-| ![main.png](./screenshots/main.png) | ![package.png](./screenshots/package.png) |
+| ![main.png](./assets/main.png) | ![package.png](./assets/package.png) |
 
 If you haven't finished replicating the remote skimdb, then not all the modules will be visible yet.
 
