@@ -1,4 +1,4 @@
-<img alt="local-npm" width="500px" src="assets/logo.svg" />
+<img alt="local-npm" width="500px" src="https://cdn.rawgit.com/local-npm/local-npm/8a78d31af0ecfd1d9dfb06ac985a7beacc343f35/assets/logo.svg" />
 
 [![Build Status](https://travis-ci.org/local-npm/local-npm.svg)](https://travis-ci.org/local-npm/local-npm) [![Coverage Status](https://coveralls.io/repos/local-npm/local-npm/badge.svg?branch=master&service=github)](https://coveralls.io/github/local-npm/local-npm?branch=master)
 
