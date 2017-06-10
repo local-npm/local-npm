@@ -1,4 +1,4 @@
-## Unreleased
+## 2.0.1 (06/09/2017)
 
 - allows scoped packages to be installed
 
