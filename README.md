@@ -6,19 +6,19 @@
 
 This allows your `npm install` commands to (mostly) work offline. Also, they get faster and faster over time, as commonly-installed modules are aggressively cached.
 
-### Overview
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-* [Introduction](#introduction)
-* [Usage](#usage)
-* [Command line options](#command-line-options)
-* [Easy install for OS X users](#easy-install-for-os-x-users)
-* [Browser UI](#browser-ui)
-* [Switching with npmrc](#switching-with-npmrc)
-* [Speed test](#speed-test)
-* [How it works](#how-it-works)
+- [Introduction](#introduction)
+- [Usage](#usage)
+- [Command line options](#command-line-options)
+- [Browser UI](#browser-ui)
+- [Switching with npmrc](#switching-with-npmrc)
+- [Speed test](#speed-test)
+- [How it works](#how-it-works)
 
-Introduction
----
+<!-- /TOC -->
+
+# Introduction
 
 `local-npm` acts as a proxy between you and the main npm registry. You run `npm install` commands like normal, but under the hood, all requests are sent through the local server.
 
@@ -32,8 +32,7 @@ If you're organizing a conference/meetup/whatever, you can also share this local
 
 Addy Osmani has [a nice post](https://addyosmani.com/blog/using-npm-offline/) comparing `local-npm` to other options.
 
-Usage
-------
+# Usage
 
 If you're using OS X, take a look at [local-npm-launch-agent](https://github.com/local-npm/local-npm-launch-agent), a one-liner that sets everything up automatically. Otherwise:
 
@@ -55,23 +54,22 @@ To switch back, you can do:
 
 The same rules as for the [npm Australia mirror](http://www.npmjs.org.au/) apply here.
 
-Command line options
-----
-
-For the command `local-npm`:
+# Command line options
 
 ```
--h, --help        : show help
--p, --port        : port (default: 5080)
--P, --pouch-port  : pouchdb-server port (default: 16984)
--l, --log         : pouchdb-server log level (error|warn|info|debug)
--r, --remote      : remote fullfatdb (default: https://registry.npmjs.org)
--R, --remote-skim : remote skimdb (default: https://skimdb.npmjs.com/registry)
--u, --url-base    : base url you want clients to use for fetching tarballs,
-                      e.g. if you are using tunneling/proxying
-                      (default: http://127.0.0.1:5080)
--v, --version     : show version number
--d, --directory   : directory to store data (default: "./")
+Usage: local-npm [options]
+
+Options:
+
+  -h, --help                   output usage information
+  -V, --version                output the version number
+  -p, --port [port]            The port to run local-npm on
+  -pp, --pouch-port [port]     The port to run the pouch db server on
+  -l, --loglevel [level]       The level to log information to the console from local-npm
+  -r, --remote [url]           The registry to fallback information gathering and tars on
+  -rs, --remote-skim [url]     The remote skimdb to sync couchdb information from
+  -u, --url [url]              The default access url that local-npm will be hosted on
+  -d, --directory [directory]  directory to store data
 ```
 
 **Protip**: You can replicate from your friend's `local-npm` to your own `local-npm` by simply pointing at it:
@@ -105,8 +103,7 @@ Easy install for OS X users
 
 If you want `local-npm` to run permanently in the background whenever you log in, just use [this simple script](https://github.com/local-npm/local-npm-launch-agent).
 
-Browser UI
-------
+# Browser UI
 
 A rudimentary npm-like UI that allows you to search modules and see their descriptions can be found at [http://localhost:5080/_browse](http://localhost:5080/_browse).
 
@@ -116,8 +113,7 @@ A rudimentary npm-like UI that allows you to search modules and see their descri
 
 If you haven't finished replicating the remote skimdb, then not all the modules will be visible yet.
 
-Switching with npmrc
-----
+# Switching with npmrc
 
 Features like `npm search` are currently unsupported. So to avoid having to remember URLs when switching back and forth, you can use `npmrc` like so (based on the instructions for [the Australian mirror of npm](http://www.npmjs.org.au/)):
 
@@ -136,13 +132,11 @@ and to switch back:
 
 Incidentally, though, `local-npm` does allow you to do `npm login` and `npm publish`. These commands will just be proxied to the main npm registry.
 
-Speed test
-----
+# Speed test
 
 For a speed test of `local-npm` versus regular npm, [see these results](https://github.com/local-npm/test-local-npm-speed#readme).
 
-How it works
------
+# How it works
 
 npm is built on top of CouchDB, so `local-npm` works by replicating the full "skimdb" database to a local [PouchDB Server](https://github.com/pouchdb/pouchdb-server). You can inspect the running database at [http://127.0.0.1:16984/_utils](http://127.0.0.1:16984/_utils). (Don't write to it!)
 
