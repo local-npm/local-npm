@@ -84,7 +84,7 @@ While your friend does:
 
 ```
 $ local-npm \
-   --url-base http://<friends_hostname>:5080
+   --url http://<friends_hostname>:5080
 ```
 
 In this way, you can create a daisy chain of awesome.
@@ -93,7 +93,7 @@ In this way, you can create a daisy chain of awesome.
 
 ```
 $ local-npm \
-    --url-base http://192.168.x.x:5080
+    --url http://192.168.x.x:5080
 ```
 
 This will ensure that clients fetch tarballs from `192.168.x.x` instead of `127.0.0.1`.
