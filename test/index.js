@@ -22,13 +22,13 @@ test('local-npm', (t) => {
 
     t.test('should standup local-npm instance', (t) => {
       server = localNpm({
-        d: path.resolve(__dirname, 'fixtures'),
-        p: 3030,
-        P: 3040,
-        l: 'debug',
-        r: 'https://registry.npmjs.org',
-        R: 'https://replicate.npmjs.com',
-        u: 'http://127.0.0.1:5080'
+        directory: path.resolve(__dirname, 'fixtures'),
+        port: 3030,
+        pouchPort: 3040,
+        logLevel: 'debug',
+        remote: 'https://registry.npmjs.org',
+        remoteSkim: 'https://replicate.npmjs.com',
+        url: 'http://127.0.0.1:5080'
       }, () => {
         t.end();
       });
@@ -214,7 +214,9 @@ test('local-npm', (t) => {
                 exec('rm ' + path.resolve(__dirname, 'fixtures', 'config.json'), () => {
                   exec('rm ' + path.resolve(__dirname, 'fixtures', 'log.txt'), () => {
                     exec('rm -r ' + path.resolve(__dirname, 'fixtures', 'project', 'node_modules'), () => {
-                      t.end();
+                        exec('rm -r ' + path.resolve(__dirname, 'fixtures', 'project', 'package-lock.json'), () => {
+                          t.end();
+                        });
                     });
                   });
                 });
