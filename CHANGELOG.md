@@ -1,6 +1,8 @@
 ## Unreleased
 
-- logger is now something that needs to be instanced with a levels parameter 
+- remove dependency on `through2`
+- adds dependency on `then-levelup`
+- logger is now something that needs to be instanced with a levels parameter
 - cleans up cli interface, uses better names for options
 
 ## 2.0.1 (06/09/2017)
