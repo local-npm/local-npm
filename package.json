@@ -45,7 +45,7 @@
     "request": "^2.39.0",
     "semver": "^5.0.1",
     "serve-favicon": "^2.0.1",
-    "through2": "^2.0.0"
+    "then-levelup": "^1.0.2"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
