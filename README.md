@@ -98,10 +98,9 @@ $ local-npm \
 
 This will ensure that clients fetch tarballs from `192.168.x.x` instead of `127.0.0.1`.
 
-Easy install for OS X users
-----
+If you want a GUI or don't want to run it from the command-line is an electron app for that! [https://github.com/local-npm/local-npm-daemon](https://github.com/local-npm/local-npm-daemon)
 
-If you want `local-npm` to run permanently in the background whenever you log in, just use [this simple script](https://github.com/local-npm/local-npm-launch-agent).
+![local-npm-daemon](https://github.com/local-npm/local-npm-daemon/raw/master/assets/example.png)
 
 # Browser UI
 
