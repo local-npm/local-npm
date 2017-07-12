@@ -15,6 +15,7 @@ This allows your `npm install` commands to (mostly) work offline. Also, they get
 - [Switching with npmrc](#switching-with-npmrc)
 - [Speed test](#speed-test)
 - [How it works](#how-it-works)
+- [Using with Docker](#using-with-docker)
 
 <!-- /TOC -->
 
@@ -144,3 +145,31 @@ The entire "skimdb" (metadata) is replicated locally, but for the "fullfatdb" (m
 CouchDB has a changes feed, so `local-npm` just listens to the `skimdb` changes to know when it needs to refresh an outdated module. Changes should replicate within a few seconds of being published. (You can watch this happen in realtime by reading the logs, which is kind of fun! An update comes in whenever someone publishes a module.)
 
 Note that new tarballs aren't downloaded until you explicitly `npm install` them, though. So e.g. if you install `v1.0.0` of a package, then `v1.0.1` is published, and your range says `^1.0.0`, then the next `npm install` will fail unless you're online and can fetch the new tarball.
+
+# Using with Docker
+
+Using local-npm with Docker can help speed up build times during development.
+The awkward way to use this would be something like:
+
+```
+RUN local-npm && \
+    npm set registry http://... && \
+    npm set proxy .... && \
+    npm install some packages etc ...
+```
+
+Running services inside of a Docker build command isn't really Docker's business.  The friendly scenario works better in this case:
+
+```
+local-npm --url=http://<network host or ip>:5080
+```
+
+And adding the npm registry/proxy commands to your Dockerfile:
+
+```
+RUN npm config set proxy http://<network host or ip>:5080
+RUN npm config set proxy http://<network host or ip>:5080
+RUN npm config set registry http://<network host or ip>:5080
+RUN npm config set strict-ssl false
+RUN npm install project dependencies ...
+```
