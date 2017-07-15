@@ -1,3 +1,7 @@
+## Unreleased
+
+- logger now allows the ability to listen to events from a process level 
+
 ## 2.1.0 (07/04/2017)
 
 - remove dependency on `through2`

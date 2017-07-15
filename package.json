@@ -38,11 +38,11 @@
     "express": "^4.15.3",
     "express-http-proxy": "^1.0.3",
     "express-pouchdb": "^2.3.7",
-    "level": "^1.3.0",
+    "level": "^1.7.0",
     "mkdirp": "^0.5.1",
-    "morgan": "^1.2.2",
     "pouchdb": "^6.2.0",
     "request": "^2.39.0",
+    "response-time": "^2.3.2",
     "semver": "^5.0.1",
     "serve-favicon": "^2.0.1",
     "then-levelup": "^1.0.2"
