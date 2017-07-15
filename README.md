@@ -72,7 +72,7 @@ require('local-npm')({
 process.on('request', (msg) => {
   console.log(msg);
 })
-``
+```
 
 # Command line options
 
