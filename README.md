@@ -10,6 +10,7 @@ This allows your `npm install` commands to (mostly) work offline. Also, they get
 
 - [Introduction](#introduction)
 - [Usage](#usage)
+	- [Listening for events](#listening-for-events)
 - [Command line options](#command-line-options)
 - [Browser UI](#browser-ui)
 - [Switching with npmrc](#switching-with-npmrc)
@@ -54,6 +55,24 @@ To switch back, you can do:
     $ npm set registry https://registry.npmjs.org
 
 The same rules as for the [npm Australia mirror](http://www.npmjs.org.au/) apply here.
+
+## Listening for events
+
+> to listen to process level events to collecting metrics use the global event emitter to introspect on these - _events can be one of the following_ (info, warn, missed, cached, request)
+
+```javascript
+require('local-npm')({
+    port: 5080,
+    pouchPort: 6789,
+    remote: 'https://registry.npmjs.org',
+    remoteSkim: 'https://replicate.npmjs.com',
+    url: 'http://127.0.0.1:5080',
+    directory: './'
+});
+process.on('request', (msg) => {
+  console.log(msg);
+})
+``
 
 # Command line options
 

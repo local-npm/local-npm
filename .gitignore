@@ -18,3 +18,4 @@ config.json
 log.txt
 .nyc_output
 .DS_Store
+package-lock.json
