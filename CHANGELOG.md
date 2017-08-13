@@ -1,3 +1,7 @@
+## 2.2.1 (08/13/2017)
+
+- fixes issue with logLevel not working as expected
+
 ## 2.2.0 (07/04/2017)
 
 - logger now allows the ability to listen to events from a process level

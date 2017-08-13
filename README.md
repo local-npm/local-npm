@@ -81,15 +81,15 @@ Usage: local-npm [options]
 
 Options:
 
-  -h, --help                   output usage information
-  -V, --version                output the version number
-  -p, --port [port]            The port to run local-npm on
-  -pp, --pouch-port [port]     The port to run the pouch db server on
-  -l, --loglevel [level]       The level to log information to the console from local-npm
-  -r, --remote [url]           The registry to fallback information gathering and tars on
-  -rs, --remote-skim [url]     The remote skimdb to sync couchdb information from
-  -u, --url [url]              The default access url that local-npm will be hosted on
-  -d, --directory [directory]  directory to store data
+	-h, --help                   output usage information
+	-V, --version                output the version number
+	-p, --port [port]            The port to run local-npm on
+	-pp, --pouch-port [port]     The port to run the pouch db server on
+	-l, --log-level [level]      The level to log information to the console from local-npm
+	-r, --remote [url]           The registry to fallback information gathering and tars on
+	-rs, --remote-skim [url]     The remote skimdb to sync couchdb information from
+	-u, --url [url]              The default access url that local-npm will be hosted on
+	-d, --directory [directory]  directory to store data
 ```
 
 **Protip**: You can replicate from your friend's `local-npm` to your own `local-npm` by simply pointing at it:
