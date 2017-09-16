@@ -1,6 +1,6 @@
 <img alt="local-npm" width="500px" src="https://cdn.rawgit.com/local-npm/local-npm/8a78d31af0ecfd1d9dfb06ac985a7beacc343f35/assets/logo.svg" />
 
-[![Build Status](https://travis-ci.org/local-npm/local-npm.svg)](https://travis-ci.org/local-npm/local-npm) [![Coverage Status](https://coveralls.io/repos/local-npm/local-npm/badge.svg?branch=master&service=github)](https://coveralls.io/github/local-npm/local-npm?branch=master)
+[![Build Status](https://travis-ci.org/local-npm/local-npm.svg)](https://travis-ci.org/local-npm/local-npm) [![Coverage Status](https://lcov-server.herokuapp.com/badge/github%2Ecom/local-npm/local-npm.svg)](https://lcov-server.herokuapp.com/coverage/github%2Ecom/local-npm/local-npm)
 
 `local-npm` is a Node server that acts as a local npm registry. It serves modules, caches them, and updates them whenever they change. Basically it's a local mirror, but without having to replicate the entire npm registry.
 
