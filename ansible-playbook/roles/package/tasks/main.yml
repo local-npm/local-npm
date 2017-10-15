@@ -1,0 +1,17 @@
+---
+- name : install epel repo
+  yum: name=epel-release state=latest
+
+- name : install packages
+  yum:
+    pkg: "{{ item }}"
+    state: latest
+  with_items:
+    - "@Development tools"
+    - nodejs
+
+
+- name: install local-npm package globally
+  npm:
+    name: local-npm
+    global: yes

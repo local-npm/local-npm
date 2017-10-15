@@ -1,0 +1,7 @@
+---
+- name: create directory for local-npm
+  file:
+    path: "{{ local_npm_path }}"
+    state: directory
+    owner: "{{ local_npm_user }}"
+    mode: 0775

@@ -1,0 +1,5 @@
+---
+
+- name : create new user for local-npm
+  user:
+    name: "{{ local_npm_user }}"

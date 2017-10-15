@@ -1,0 +1,13 @@
+---
+- name: local-npm systemd script file
+  template:
+    src: local-npm-repo.service.j2
+    dest: /usr/lib/systemd/system/local-npm-repo.service
+    backup: yes
+
+- name: start local-npm service
+  systemd:
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+    name: local-npm-repo

@@ -1,0 +1,3 @@
+#!/bin/bash
+PID=`ps -ax | grep node  | grep /usr/bin/local-npm | awk '{ print $1 }'`
+kill -9 $PID

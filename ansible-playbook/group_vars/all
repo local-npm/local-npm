@@ -1,0 +1,9 @@
+---
+# Variables listed here are applicable to all host groups
+
+
+#node_ip: ip set on server
+
+local_npm_port: 5080
+local_npm_path: /opt/local-npm-repo
+local_npm_user: npm-user

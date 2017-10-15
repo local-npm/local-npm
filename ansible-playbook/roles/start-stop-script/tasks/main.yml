@@ -1,0 +1,16 @@
+---
+- name: local-npm start script file
+  template:
+    src: start.sh.j2
+    dest: "{{ local_npm_path }}/start.sh"
+    backup: yes
+    mode: 0755
+    owner: "{{ local_npm_user }}"
+
+- name: local-npm stop script file
+  template:
+    src: stop.sh.j2
+    dest: "{{ local_npm_path }}/stop.sh"
+    backup: yes
+    mode: 0755
+    owner: "{{ local_npm_user }}"

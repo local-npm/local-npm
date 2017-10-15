@@ -1,0 +1,16 @@
+[Unit]
+Description=Local NPM Repo
+Documentation=https://github.com/local-npm/local-npm/
+Requires=network.target
+After=network.target
+
+[Service]
+Type=forking
+User={{ local_npm_user }}
+Group={{ local_npm_user }}
+ExecStart={{ local_npm_path }}/start.sh
+
+ExecStop={{ local_npm_path }}/stop.sh
+
+[Install]
+WantedBy=multi-user.target

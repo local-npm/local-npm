@@ -1,0 +1,10 @@
+# Installation local-npm in centos 7.x
+- hosts: local-npm-server
+  remote_user: root
+  roles:
+  - package
+  - firewalld
+  - create-newuser
+  - create-path
+  - start-stop-script
+  - systemd-file
