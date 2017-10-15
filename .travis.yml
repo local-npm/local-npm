@@ -3,7 +3,7 @@ script:
   - npm install lcov-server -g
   - npm run lint
   - npm run coverage
-  - cat coverage/lcov.info | lcov-server-cli --url https://lcov-server.herokuapp.com
+  - cat coverage/lcov.info | lcov-server --upload https://lcov-server.herokuapp.com
 node_js:
   - "4"
   - "6"
