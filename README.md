@@ -165,6 +165,36 @@ CouchDB has a changes feed, so `local-npm` just listens to the `skimdb` changes 
 
 Note that new tarballs aren't downloaded until you explicitly `npm install` them, though. So e.g. if you install `v1.0.0` of a package, then `v1.0.1` is published, and your range says `^1.0.0`, then the next `npm install` will fail unless you're online and can fetch the new tarball.
 
+# Use Ansible Playbook
+
+For Deploy local-npm By Ansible Playbook go to ansible-playbook Directory:
+
+```
+cd ansible-playbook
+```
+Then enter your server IP Address (local-npm server) in hosts file:
+
+```
+vi hosts
+```
+After that set Information Of Your Environment in varible File:
+
+```
+vi group_vars/all
+```
+Now for Run Ansible Playbook use this command:
+
+```
+ansible-playbook -i hosts main-playbook.yml
+```
+
+When Ansible Playbook Run successful completely, You Can Take Control local-npm service By systemd:
+
+```
+systemctl start local-npm
+```
+
+
 # Using with Docker
 
 Using local-npm with Docker can help speed up build times during development.
