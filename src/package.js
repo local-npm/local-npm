@@ -4,17 +4,22 @@ import React from 'react';
 import moment from 'moment';
 import Marked from 'marked';
 import PropTypes from 'prop-types';
+
 import { LineChart, CartesianGrid, Tooltip, Line } from 'recharts';
 
 class Package extends React.Component {
   constructor(props) {
     super(props);
 
+    const { match } = props;
+    const { params } = match;
+    const { name } = params;
+
     this.state = {
         doc: {}
     };
 
-    this.findPackages(props.params.name);
+    this.findPackages(name);
   }
   findPackages(name) {
     const self = this;
@@ -39,9 +44,13 @@ class Package extends React.Component {
   render() {
     const self = this;
     const { doc } = this.state;
-    const { time, bugs, author, repository, license, description, homepage, readme, contributors, maintainers } = doc;
+    let { time, bugs, author, repository, license, description, homepage, readme, contributors, maintainers } = doc;
     const latest = doc['dist-tags'] && doc['dist-tags']['latest'];
     const keywords = latest && doc.versions[latest].keywords;
+
+    if(license && Object.keys(license).length > 0) {
+      license = license.type || 'NONE'
+    }
 
     const versionReleases = time && Object.keys(time).reverse().map((v, i) => {
         const current = moment(time[v]);
@@ -151,8 +160,10 @@ class Package extends React.Component {
 }
 
 Package.propTypes = {
-    params: PropTypes.shape({
-        name: PropTypes.string
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+          name: PropTypes.string
+        })
     })
 }
 

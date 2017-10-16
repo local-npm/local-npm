@@ -5,7 +5,6 @@ script:
   - npm run coverage
   - cat coverage/lcov.info | lcov-server --upload https://lcov-server.herokuapp.com
 node_js:
-  - "4"
   - "6"
   - "8"
 os:
