@@ -38,6 +38,7 @@
     "express-http-proxy": "^1.0.7",
     "express-pouchdb": "^2.3.7",
     "level": "^1.7.0",
+    "leveldown": "^1.8.0",
     "mkdirp": "^0.5.1",
     "pouchdb": "^6.3.4",
     "request": "^2.83.0",
