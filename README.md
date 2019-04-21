@@ -177,7 +177,7 @@ RUN local-npm && \
     npm install some packages etc ...
 ```
 
-Running services inside of a Docker build command isn't really Docker's business.  The friendly scenario works better in this case:
+Running services inside of a Docker build command isn't really Docker's business.  The friendly scenario works better in this case, i.e. you run local-npm on the host machine:
 
 ```
 local-npm --url=http://<network host or ip>:5080
