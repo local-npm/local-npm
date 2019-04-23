@@ -94,6 +94,7 @@ class Main extends React.Component {
                 let { author, repository, license, description, homepage } = doc;
                 const latest = doc['dist-tags'] && doc['dist-tags']['latest'];
                 const keywords = latest && doc.versions[latest].keywords || [];
+                const escapeDocHref = doc.name.replace(/\//,'%2f')  // escape symbol '/'， fix bug like @turf/turf.
 
                 if(license && Object.keys(license).length > 0) {
                   license = license.type || 'NONE'
@@ -102,7 +103,7 @@ class Main extends React.Component {
                 return (
                     <div key={ i } style={{ minHeight: '100px', borderBottom: '1px solid #e9e9e9', paddingBottom: '10px', marginBottom: '15px' }}>
                         <div style={{ marginBottom: '10px' }}>
-                            <a style={{ fontSize: '28px', color: 'black', borderBottom: '1px dotted #e9e9e9' }} href={ `/_browse/package/${doc.name}` }>{doc.name}</a>
+                            <a style={{ fontSize: '28px', color: 'black', borderBottom: '1px dotted #e9e9e9' }} href={ `/_browse/package/${escapeDocHref}` }>{doc.name}</a>
                             { license ? <span style={{ padding: '3px', display: 'inline-block', fontSize: '10px', color: '#9a9a9a', marginRight: '5px', marginLeft: '5px', borderRadius: '5px' }} className="badge"> {  } </span> : '' }
                             { latest ? <span style={{ fontWeight: 'bold', color: '#9a9a9a', fontSize: '12px' }}> { latest } </span> : '' }
                         </div>
