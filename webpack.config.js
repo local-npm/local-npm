@@ -1,12 +1,13 @@
 const webpack = require('webpack');
 const path = require('path');
-require('babel-polyfill');
+
+const MinifyPlugin = require('babel-minify-webpack-plugin');
 
 const config = {
-    entry: ['babel-polyfill','./src/app.js'],
+    entry: ['@babel/polyfill','./src/app.js'],
     output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: 'build.js'
+      path: path.resolve(__dirname, 'dist'),
+      filename: '[name].js'
     },
     devServer: {
         port: 5000,
@@ -22,49 +23,45 @@ const config = {
     module: {
         rules: [{
                 test: /\.css$/,
-                loaders: ['style-loader', 'css-loader']
+                use: ['style-loader', 'css-loader']
             }, {
                 test: /.jsx?$/,
-                loader: 'babel-loader',
-                exclude: /node_modules/,
-                query: {
-                    presets: ['es2015', 'react']
-                }
+                use: ['babel-loader'],
+                exclude: /node_modules/
             }, {
                 test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: "url-loader"
+                use: ["url-loader"]
             },
             {
                 test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: "url-loader"
+                use: ["url-loader"]
             }
         ]
-    }
+    },
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          commons: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all'
+          }
+        }
+      }
+    },
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
+        }
+      }),
+      new webpack.ContextReplacementPlugin(/moment[\\\/]locale$/, /^\.\/(en)$/), // eslint-disable-line
+      new webpack.optimize.AggressiveMergingPlugin()
+    ]
 };
 
-if (process.env.NODE_ENV == 'production') {
-    config.plugins = [
-        new webpack.DefinePlugin({
-            'process.env': {
-                'NODE_ENV': JSON.stringify('production')
-            }
-        }),
-        new webpack.ContextReplacementPlugin(/moment[\\]locale$/, /^\.\/(en)$/),
-        new webpack.optimize.UglifyJsPlugin({
-            comments: false,
-            compress: {
-                unused: true,
-                dead_code: true,
-                warnings: false,
-                drop_debugger: true,
-                conditionals: true,
-                evaluate: true,
-                sequences: true,
-                booleans: true,
-            }
-        }),
-        new webpack.optimize.AggressiveMergingPlugin(),
-    ];
+if(process.env.NODE_ENV === 'production') {
+  config.plugins.push(new MinifyPlugin());
 }
 
 module.exports = config;
