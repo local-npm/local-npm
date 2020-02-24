@@ -12,7 +12,7 @@
     "dev": "webpack-dev-server --hot"
   },
   "engines": {
-    "node": ">= 6"
+    "node": ">= 12"
   },
   "author": {
     "name": "Nolan Lawson",
